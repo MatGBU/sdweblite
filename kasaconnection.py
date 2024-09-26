@@ -3,7 +3,7 @@ from kasa import Discover
 
 
 async def main():
-    dev = await Discover.discover("192.168.0.11",username="gorczam02@gmail.com",password="SeniorDesign28.")
+    dev = await Discover.discover_single("192.168.0.11",username="gorczam02@gmail.com",password="SeniorDesign28.")
     await dev.turn_off()
     await dev.update()
     for feature_name in dev.features:
