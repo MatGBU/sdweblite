@@ -9,7 +9,7 @@ DEVICE_IP = "192.168.0.11"
 
 # Async function to control the power strip
 async def control_device(action):
-    dev = SmartStrip(DEVICE_IP)
+    dev = await Discover.discover_single("192.168.0.11",username="gorczam02@gmail.com",password="SeniorDesign28")
     await dev.update()  # Ensure device is up-to-date
 
     if action == "on":
