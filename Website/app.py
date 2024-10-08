@@ -12,7 +12,7 @@ async def turn_on_device():
     await plug.update()
     await plug.turn_on()
     await plug.update()  # Update device state after turning it on
-    return plug.is_on
+
 
 # Function to turn off the device
 async def turn_off_device():
@@ -20,7 +20,7 @@ async def turn_off_device():
     await plug.update()
     await plug.turn_off()
     await plug.update()  # Update device state after turning it off
-    return plug.is_off
+ 
 
 # Route to turn on the device
 @app.route('/turn_on', methods=['GET'])
@@ -39,4 +39,4 @@ def turn_off():
     return jsonify({'status': 'off'}) if is_off else jsonify({'error': 'Failed to turn off'})
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5001)
