@@ -1,21 +1,27 @@
-// JavaScript to control the TP-Link power strip
-document.getElementById('myButton').addEventListener('click', function() {
-    const action = this.dataset.action;  // Determine if the action is 'on' or 'off'
-    const url = `http://127.0.0.1:5000/control/${action}`;
+// Function to make an API request to turn on the light
+document.getElementById('turnOnButton').addEventListener('click', function() {
+    fetch('/turn_on')
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'on') {
+                document.getElementById('statusMessage').textContent = 'The light is ON.';
+            } else {
+                document.getElementById('statusMessage').textContent = 'Failed to turn on the light.';
+            }
+        })
+        .catch(error => console.error('Error:', error));
+});
 
-    fetch(url)
-    .then(response => response.json())
-    .then(data => {
-        if (data.status) {
-            document.getElementById('output').textContent = `Power strip is now ${data.status}`;
-            // Toggle action for next click
-            this.dataset.action = data.status === 'on' ? 'off' : 'on';
-            this.textContent = data.status === 'on' ? 'Turn Off' : 'Turn On';
-        } else {
-            document.getElementById('output').textContent = 'Failed to control the power strip!';
-        }
-    })
-    .catch(error => {
-        document.getElementById('output').textContent = 'Error: ' + error.message;
-    });
+// Function to make an API request to turn off the light
+document.getElementById('turnOffButton').addEventListener('click', function() {
+    fetch('/turn_off')
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'off') {
+                document.getElementById('statusMessage').textContent = 'The light is OFF.';
+            } else {
+                document.getElementById('statusMessage').textContent = 'Failed to turn off the light.';
+            }
+        })
+        .catch(error => console.error('Error:', error));
 });

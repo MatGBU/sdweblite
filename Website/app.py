@@ -1,37 +1,42 @@
 from flask import Flask, jsonify
 import asyncio
-from kasa import SmartStrip
-
+from kasa import SmartPlug  # If you're using a smart plug
 
 app = Flask(__name__)
 
-# TP-Link Smart Power Strip IP address
-DEVICE_IP = "192.168.0.11"
+DEVICE_IP = "192.168.0.11"  # Replace with your actual device's IP address
 
-# Async function to control the power strip
-async def control_device(action):
-    dev = SmartStrip(DEVICE_IP)
-    await dev.update()  # Ensure device is up-to-date
+# Function to turn on the device
+async def turn_on_device():
+    plug = SmartPlug(DEVICE_IP)
+    await plug.update()
+    await plug.turn_on()
+    await plug.update()  # Update device state after turning it on
+    return plug.is_on
 
-    if action == "on":
-        await dev.turn_on()
-    elif action == "off":
-        await dev.turn_off()
+# Function to turn off the device
+async def turn_off_device():
+    plug = SmartPlug(DEVICE_IP)
+    await plug.update()
+    await plug.turn_off()
+    await plug.update()  # Update device state after turning it off
+    return plug.is_off
 
-    await dev.update()  # Fetch the latest state of the device
-    return dev.is_on
-
-@app.route('/control/<action>', methods=['GET'])
-def control_power_strip(action):
-    if action not in ['on', 'off']:
-        return jsonify({"error": "Invalid action"}), 400
-
+# Route to turn on the device
+@app.route('/turn_on', methods=['GET'])
+def turn_on():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    is_on = loop.run_until_complete(control_device(action))
+    is_on = loop.run_until_complete(turn_on_device())
+    return jsonify({'status': 'on'}) if is_on else jsonify({'error': 'Failed to turn on'})
 
-    status = "on" if is_on else "off"
-    return jsonify({"status": status})
+# Route to turn off the device
+@app.route('/turn_off', methods=['GET'])
+def turn_off():
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    is_off = loop.run_until_complete(turn_off_device())
+    return jsonify({'status': 'off'}) if is_off else jsonify({'error': 'Failed to turn off'})
 
 if __name__ == "__main__":
     app.run(debug=True)
