@@ -3,7 +3,7 @@ from kasa import Discover
 
 
 async def main():    #everything as to run inside the async function
-    dev = await Discover.discover_single("192.168.0.11",username="gorczam02@gmail.com",password="")  #remember to change the password
+    dev = await Discover.discover_single("192.168.0.11",username="gorczam02@gmail.com",password="SeniorDesign28")  #remember to change the password
     await dev.turn_on()   #turns the device on/off
     await dev.update()    #updates the firmware
     for feature_name in dev.features:
