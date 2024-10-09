@@ -1,10 +1,10 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, render_template, jsonify
 import asyncio
-from kasa import SmartPlug  # If you're using a smart plug
+from kasa import SmartPlug  # Assuming you're using a Kasa SmartPlug
 
 app = Flask(__name__)
 
-DEVICE_IP = "192.168.0.11"  # Replace with your actual device's IP address
+DEVICE_IP = "192.168.0.11"  # Replace with your actual device IP
 
 # Function to turn on the device
 async def turn_on_device():
@@ -20,12 +20,12 @@ async def turn_off_device():
     await plug.update()
     await plug.turn_off()
     await plug.update()  # Update device state after turning it off
- 
+
+
 # Route to serve the HTML page
 @app.route('/')
 def home():
     return render_template('index.html')
-
 
 # Route to turn on the device
 @app.route('/turn_on', methods=['GET'])
@@ -44,4 +44,4 @@ def turn_off():
     return jsonify({'status': 'off'}) if is_off else jsonify({'error': 'Failed to turn off'})
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    app.run(port=5001, debug=True)
