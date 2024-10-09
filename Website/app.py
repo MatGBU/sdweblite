@@ -27,7 +27,6 @@ async def turn_off_device():
 def home():
     return render_template('index.html')
 
-# Route to turn on the device
 @app.route('/turn_on', methods=['GET'])
 def turn_on():
     loop = asyncio.new_event_loop()
@@ -35,13 +34,13 @@ def turn_on():
     is_on = loop.run_until_complete(turn_on_device())
     return jsonify({'status': 'on'}) if is_on else jsonify({'error': 'Failed to turn on'})
 
-# Route to turn off the device
 @app.route('/turn_off', methods=['GET'])
 def turn_off():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     is_off = loop.run_until_complete(turn_off_device())
     return jsonify({'status': 'off'}) if is_off else jsonify({'error': 'Failed to turn off'})
+
 
 if __name__ == "__main__":
     app.run(port=5001, debug=True)
