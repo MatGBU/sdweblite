@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 import asyncio
 from kasa import SmartPlug  # If you're using a smart plug
 
@@ -21,6 +21,11 @@ async def turn_off_device():
     await plug.turn_off()
     await plug.update()  # Update device state after turning it off
  
+# Route to serve the HTML page
+@app.route('/')
+def home():
+    return render_template('index.html')
+
 
 # Route to turn on the device
 @app.route('/turn_on', methods=['GET'])
