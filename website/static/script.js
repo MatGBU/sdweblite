@@ -1,13 +1,27 @@
+// Function to make an API request to turn on the light
 document.getElementById('turnOnButton').addEventListener('click', function() {
-    fetch('127.0.0.1:5001/turn_on')
+    fetch('/turn_on')
         .then(response => response.json())
-
+        .then(data => {
+            if (data.status === 'on') {
+                document.getElementById('statusMessage').textContent = 'The light is ON.';
+            } else {
+                document.getElementById('statusMessage').textContent = 'Failed to turn on the light.';
+            }
+        })
         .catch(error => console.error('Error:', error));
 });
 
+// Function to make an API request to turn off the light
 document.getElementById('turnOffButton').addEventListener('click', function() {
-    fetch('127.0.0.1:5001/turn_off')
+    fetch('/turn_off')
         .then(response => response.json())
-
+        .then(data => {
+            if (data.status === 'off') {
+                document.getElementById('statusMessage').textContent = 'The light is OFF.';
+            } else {
+                document.getElementById('statusMessage').textContent = 'Failed to turn off the light.';
+            }
+        })
         .catch(error => console.error('Error:', error));
 });
