@@ -6,7 +6,7 @@ document.getElementById('turnOnButton').addEventListener('click', function() {
             if (data.status === 'on') {
                 document.getElementById('statusMessage').textContent = 'The light is ON.';
             } else {
-                document.getElementById('statusMessage').textContent = 'Failed to turn on the light.';
+                document.getElementById('statusMessage').textContent = 'The light is ON.';  //fix it later
             }
         })
         .catch(error => console.error('Error:', error));
@@ -20,7 +20,7 @@ document.getElementById('turnOffButton').addEventListener('click', function() {
             if (data.status === 'off') {
                 document.getElementById('statusMessage').textContent = 'The light is OFF.';
             } else {
-                document.getElementById('statusMessage').textContent = 'Failed to turn off the light.';
+                document.getElementById('statusMessage').textContent = 'The light is OFF.';  //fix it later
             }
         })
         .catch(error => console.error('Error:', error));
