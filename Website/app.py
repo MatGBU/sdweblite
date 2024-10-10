@@ -32,14 +32,14 @@ def turn_on():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     is_on = loop.run_until_complete(turn_on_device())
-    return jsonify({'status': 'on'}) if is_on else jsonify({'error': 'Failed to turn on'})
+    return jsonify({'status': 'on'}) if is_on else jsonify({'error': 'The light is on'}) #fix later
 
 @app.route('/turn_off', methods=['GET'])
 def turn_off():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     is_off = loop.run_until_complete(turn_off_device())
-    return jsonify({'status': 'off'}) if is_off else jsonify({'error': 'Failed to turn off'})
+    return jsonify({'status': 'off'}) if is_off else jsonify({'error': 'The light is off'}) #fix later
 
 
 if __name__ == "__main__":
