@@ -33,16 +33,10 @@ var routes = [
     component: <Dashboard />,
     layout: "/admin",
   },
-  {
-    path: "/icons",
-    name: "Icons",
-    icon: "nc-icon nc-diamond",
-    component: <Icons />,
-    layout: "/admin",
-  },
+
   {
     path: "/maps",
-    name: "Maps",
+    name: "Map",
     icon: "nc-icon nc-pin-3",
     component: <Maps />,
     layout: "/admin",
@@ -61,27 +55,6 @@ var routes = [
     component: <UserPage />,
     layout: "/admin",
   },
-  {
-    path: "/tables",
-    name: "Table List",
-    icon: "nc-icon nc-tile-56",
-    component: <TableList />,
-    layout: "/admin",
-  },
-  {
-    path: "/typography",
-    name: "Typography",
-    icon: "nc-icon nc-caps-small",
-    component: <Typography />,
-    layout: "/admin",
-  },
-  {
-    pro: true,
-    path: "/upgrade",
-    name: "Upgrade to PRO",
-    icon: "nc-icon nc-spaceship",
-    component: <UpgradeToPro />,
-    layout: "/admin",
-  },
+
 ];
 export default routes;
