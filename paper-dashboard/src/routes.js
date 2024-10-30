@@ -34,13 +34,7 @@ var routes = [
     layout: "/admin",
   },
 
-  {
-    path: "/maps",
-    name: "Map",
-    icon: "nc-icon nc-pin-3",
-    component: <Maps />,
-    layout: "/admin",
-  },
+
   {
     path: "/notifications",
     name: "Notifications",
@@ -49,6 +43,7 @@ var routes = [
     layout: "/admin",
   },
   {
+    pro: true,
     path: "/user-page",
     name: "User Profile",
     icon: "nc-icon nc-single-02",

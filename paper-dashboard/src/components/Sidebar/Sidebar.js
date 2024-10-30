@@ -54,15 +54,15 @@ function Sidebar(props) {
     >
       <div className="logo">
         <a
-          href="https://www.creative-tim.com"
+          href=""
           className="simple-text logo-mini"
         >
-          <div className="logo-img">
-            <img src={logo} alt="react-logo" />
-          </div>
+          <div className="image">
+            <img alt="..." src={require("assets/img/ecologo.png")} />
+           </div>
         </a>
         <a
-          href="https://www.creative-tim.com"
+          href=""
           className="simple-text logo-normal"
         >
           EcoStrip Solutions

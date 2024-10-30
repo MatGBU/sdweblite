@@ -52,8 +52,8 @@ function Dashboard() {
                   </Col>
                   <Col md="8" xs="7">
                     <div className="numbers">
-                      <p className="card-category">Capacity</p>
-                      <CardTitle tag="p">150GB</CardTitle>
+                      <p className="card-category">Power Usage</p>
+                      <CardTitle tag="p">150kW</CardTitle>
                       <p />
                     </div>
                   </Col>
@@ -78,8 +78,8 @@ function Dashboard() {
                   </Col>
                   <Col md="8" xs="7">
                     <div className="numbers">
-                      <p className="card-category">Revenue</p>
-                      <CardTitle tag="p">$ 1,345</CardTitle>
+                      <p className="card-category">Money Saved</p>
+                      <CardTitle tag="p">$ 14</CardTitle>
                       <p />
                     </div>
                   </Col>
@@ -88,7 +88,7 @@ function Dashboard() {
               <CardFooter>
                 <hr />
                 <div className="stats">
-                  <i className="far fa-calendar" /> Last day
+                  <i className="far fa-calendar" /> Last Month
                 </div>
               </CardFooter>
             </Card>
@@ -104,8 +104,8 @@ function Dashboard() {
                   </Col>
                   <Col md="8" xs="7">
                     <div className="numbers">
-                      <p className="card-category">Errors</p>
-                      <CardTitle tag="p">23</CardTitle>
+                      <p className="card-category">Sources of Energy</p>
+                      <CardTitle tag="p">5</CardTitle>
                       <p />
                     </div>
                   </Col>
@@ -114,7 +114,7 @@ function Dashboard() {
               <CardFooter>
                 <hr />
                 <div className="stats">
-                  <i className="far fa-clock" /> In the last hour
+                  <i className="far fa-clock" /> In the last day
                 </div>
               </CardFooter>
             </Card>
@@ -130,8 +130,8 @@ function Dashboard() {
                   </Col>
                   <Col md="8" xs="7">
                     <div className="numbers">
-                      <p className="card-category">Followers</p>
-                      <CardTitle tag="p">+45K</CardTitle>
+                      <p className="card-category">Cleanest Generation</p>
+                      <CardTitle tag="p">In 3 hours</CardTitle>
                       <p />
                     </div>
                   </Col>
@@ -150,8 +150,8 @@ function Dashboard() {
           <Col md="12">
             <Card>
               <CardHeader>
-                <CardTitle tag="h5">Users Behavior</CardTitle>
-                <p className="card-category">24 Hours performance</p>
+                <CardTitle tag="h5">Generation Prediction</CardTitle>
+                <p className="card-category">24 Hours Forecast</p>
               </CardHeader>
               <CardBody>
                 <Line
@@ -174,8 +174,8 @@ function Dashboard() {
           <Col md="4">
             <Card>
               <CardHeader>
-                <CardTitle tag="h5">Email Statistics</CardTitle>
-                <p className="card-category">Last Campaign Performance</p>
+                <CardTitle tag="h5">Generation Breakdown</CardTitle>
+                <p className="card-category">Last Month's Performance</p>
               </CardHeader>
               <CardBody style={{ height: "266px" }}>
                 <Pie
@@ -185,14 +185,14 @@ function Dashboard() {
               </CardBody>
               <CardFooter>
                 <div className="legend">
-                  <i className="fa fa-circle text-primary" /> Opened{" "}
-                  <i className="fa fa-circle text-warning" /> Read{" "}
-                  <i className="fa fa-circle text-danger" /> Deleted{" "}
-                  <i className="fa fa-circle text-gray" /> Unopened
+                  <i className="fa fa-circle text-primary" /> Hydro{" "}
+                  <i className="fa fa-circle text-warning" /> Solar{" "}
+                  <i className="fa fa-circle text-danger" /> Wind{" "}
+                  <i className="fa fa-circle text-gray" /> Coal
                 </div>
                 <hr />
                 <div className="stats">
-                  <i className="fa fa-calendar" /> Number of emails sent
+                  <i className="fa fa-calendar" /> TEST
                 </div>
               </CardFooter>
             </Card>
@@ -200,8 +200,8 @@ function Dashboard() {
           <Col md="8">
             <Card className="card-chart">
               <CardHeader>
-                <CardTitle tag="h5">NASDAQ: AAPL</CardTitle>
-                <p className="card-category">Line Chart with Points</p>
+                <CardTitle tag="h5">Yearly Generation</CardTitle>
+                <p className="card-category">Per Month</p>
               </CardHeader>
               <CardBody>
                 <Line
@@ -213,8 +213,8 @@ function Dashboard() {
               </CardBody>
               <CardFooter>
                 <div className="chart-legend">
-                  <i className="fa fa-circle text-info" /> Tesla Model S{" "}
-                  <i className="fa fa-circle text-warning" /> BMW 5 Series
+                  <i className="fa fa-circle text-info" /> Hydro{" "}
+                  <i className="fa fa-circle text-warning" /> Solar
                 </div>
                 <hr />
                 <div className="card-stats">
