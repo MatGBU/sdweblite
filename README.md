@@ -2,7 +2,10 @@
 
 In command terminal, enter:
 ```
-python3 -m venv env
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt-get update
+sudo apt-get install python3.10 python3.10-venv
+python3.10 -m venv env
 source env/bin/activate
 pip install -r requirements.txt
 ```
