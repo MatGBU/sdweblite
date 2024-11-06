@@ -36,10 +36,10 @@ var routes = [
   },
 
   {
-    path: "/icons",
+    path: "/devices",
     name: "Devices",
-    icon: "nc-icon nc-bell-55",
-    component: <Icons />,
+    icon: "nc-icon nc-app",
+    component: <Devices />,
     layout: "/admin",
   },
   {
