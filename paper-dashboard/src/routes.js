@@ -24,6 +24,7 @@ import TableList from "views/Tables.js";
 import Maps from "views/Map.js";
 import UserPage from "views/User.js";
 import UpgradeToPro from "views/Upgrade.js";
+import Devices from "views/Devices.js";
 
 var routes = [
   {
@@ -34,7 +35,13 @@ var routes = [
     layout: "/admin",
   },
 
-
+  {
+    path: "/icons",
+    name: "Devices",
+    icon: "nc-icon nc-bell-55",
+    component: <Icons />,
+    layout: "/admin",
+  },
   {
     path: "/notifications",
     name: "Notifications",
