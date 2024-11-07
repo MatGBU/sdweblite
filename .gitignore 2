@@ -1,4 +1,0 @@
-env/
-__pycache__
-frontend/paper-dashboard/node_modules
-frontend/paper-dashboard/package-lock.json
