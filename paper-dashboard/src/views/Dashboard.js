@@ -16,9 +16,10 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+
+import React, { useState, useEffect } from "react";
 // react plugin used to create charts
-import { Line, Pie } from "react-chartjs-2";
+import { Line } from "react-chartjs-2";
 // reactstrap components
 import {
   Card,
@@ -29,14 +30,46 @@ import {
   Row,
   Col,
 } from "reactstrap";
+
 // core components
-import {
-  dashboard24HoursPerformanceChart,
-  dashboardEmailStatisticsChart,
-  dashboardNASDAQChart,
-} from "variables/charts.js";
+import { predictiongraph } from "/Users/mateuszgorczak/Documents/GitHub/Senior-project/paper-dashboard/src/variables/charts.js";
+
+// Initialize the chart when the page is fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+  predictiongraph();
+});
 
 function Dashboard() {
+  const [chartData, setChartData] = useState({
+    labels: [], // Initialize with an empty labels array
+    datasets: [
+      {
+        label: 'Loading...',
+        data: [], // Empty data array for initial render
+        borderColor: '#6bd098',
+        backgroundColor: 'rgba(107, 208, 152, 0.2)',
+        fill: true,
+      },
+    ],
+  });
+
+  // Use useEffect to set chart data when the component mounts
+  useEffect(() => {
+    async function loadChartData() {
+      console.log("Fetching chart data...");
+      if (predictiongraph && predictiongraph.data) {
+        console.log("Data loaded:", predictiongraph.data);
+        setChartData(predictiongraph.data); // Set the chart data state
+      } else {
+        console.log("No data available in predictiongraph.");
+      }
+    }
+
+    loadChartData();
+  }, []);
+
+  console.log("Rendering chart with data:", chartData);
+  
   return (
     <>
       <div className="content">
@@ -154,12 +187,17 @@ function Dashboard() {
                 <p className="card-category">24 Hours Forecast</p>
               </CardHeader>
               <CardBody>
-                <Line
-                  data={dashboard24HoursPerformanceChart.data}
-                  options={dashboard24HoursPerformanceChart.options}
-                  width={400}
-                  height={100}
-                />
+              {chartData.labels && chartData.labels.length > 0 ? (
+                  <Line
+                    id="myChart"
+                    data={chartData} // Render chart with loaded data
+                    options={predictiongraph.options}
+                    width={400}
+                    height={100}
+                  />
+                ) : (
+                  <p>Loading chart data...</p>
+                )}
               </CardBody>
               <CardFooter>
                 <hr />
@@ -178,11 +216,8 @@ function Dashboard() {
                 <p className="card-category">Last Month's Performance</p>
               </CardHeader>
               <CardBody style={{ height: "266px" }}>
-                <Pie
-                  data={dashboardEmailStatisticsChart.data}
-                  options={dashboardEmailStatisticsChart.options}
-                />
-              </CardBody>
+               
+              </CardBody> 
               <CardFooter>
                 <div className="legend">
                   <i className="fa fa-circle text-primary" /> Hydro{" "}
@@ -204,12 +239,7 @@ function Dashboard() {
                 <p className="card-category">Per Month</p>
               </CardHeader>
               <CardBody>
-                <Line
-                  data={dashboardNASDAQChart.data}
-                  options={dashboardNASDAQChart.options}
-                  width={400}
-                  height={100}
-                />
+              
               </CardBody>
               <CardFooter>
                 <div className="chart-legend">
