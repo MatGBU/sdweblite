@@ -12,7 +12,7 @@ import {
 } from "reactstrap";
 
 // core components
-import { predictiongraph } from "/Users/mateuszgorczak/Documents/GitHub/Senior-project/paper-dashboard/src/variables/charts.js";
+import { predictiongraph } from "../variables/charts.js";
 
 // Initialize the chart when the page is fully loaded
 document.addEventListener('DOMContentLoaded', () => {

@@ -55,9 +55,11 @@ function LoginPage() {
 
     // Sample code for login, this needs to make a call to aws or something
     setTimeout(() => {
-      if (email === 'user@example.com' && password === '12345') {
+      if (email === 'user@gmail.com' && password === '12345') {
         alert('Login successful!');
+        localStorage.setItem('isLoggedIn', 'true');
         setIsLoading(false);
+        window.location.href = '/admin/dashboard';
       } else {
         setErrorMessage('Invalid email or password');
         setIsLoading(false);
