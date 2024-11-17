@@ -19,6 +19,7 @@
 import Dashboard from "views/Dashboard.js";
 import Notifications from "views/Notifications.js";
 import Icons from "views/Icons.js";
+import LoginPage from "views/Login.js";
 import Typography from "views/Typography.js";
 import TableList from "views/Tables.js";
 import Maps from "views/Map.js";
@@ -47,6 +48,13 @@ var routes = [
     name: "Notifications",
     icon: "nc-icon nc-bell-55",
     component: <Notifications />,
+    layout: "/admin",
+  },
+  {
+    path: "/login",
+    name: "Login",
+    icon: "nc-icon nc-lock-circle-open",
+    component: <LoginPage />,
     layout: "/admin",
   },
   {

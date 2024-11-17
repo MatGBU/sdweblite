@@ -1,6 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { Line } from "react-chartjs-2";
-import { Card, CardHeader, CardBody, CardFooter, CardTitle, Row, Col } from "reactstrap";
+// reactstrap components
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  CardTitle,
+  Row,
+  Col,
+} from "reactstrap";
+
+// core components
+import { predictiongraph } from "/Users/mateuszgorczak/Documents/GitHub/Senior-project/paper-dashboard/src/variables/charts.js";
+
+// Initialize the chart when the page is fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+  predictiongraph();
+});
 
 function Dashboard() {
   const [chartData, setChartData] = useState({
@@ -206,12 +223,18 @@ function Dashboard() {
                 <p className="card-category">24 Hours Forecast (MW)</p>
               </CardHeader>
               <CardBody>
-                 {chartData.labels.length > 0 ? (
-                 <Line data={chartData} options={{ responsive: true, maintainAspectRatio: false }} />
-                    ) : (
-                   <p>Loading chart data...</p>
-                     )}
-                </CardBody>
+              {chartData.labels && chartData.labels.length > 0 ? (
+                  <Line
+                    id="myChart"
+                    data={chartData} // Render chart with loaded data
+                    options={predictiongraph.options}
+                    width={400}
+                    height={100}
+                  />
+                ) : (
+                  <p>Loading chart data...</p>
+                )}
+              </CardBody>
               <CardFooter>
                 <hr />
                 <div className="stats">
