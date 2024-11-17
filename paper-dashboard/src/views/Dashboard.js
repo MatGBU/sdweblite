@@ -1,75 +1,94 @@
-/*!
-
-=========================================================
-* Paper Dashboard React - v1.3.2
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/paper-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-* Licensed under MIT (https://github.com/creativetimofficial/paper-dashboard-react/blob/main/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-
 import React, { useState, useEffect } from "react";
-// react plugin used to create charts
 import { Line } from "react-chartjs-2";
-// reactstrap components
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  CardTitle,
-  Row,
-  Col,
-} from "reactstrap";
-
-// core components
-import { predictiongraph } from "/Users/mateuszgorczak/Documents/GitHub/Senior-project/paper-dashboard/src/variables/charts.js";
-
-// Initialize the chart when the page is fully loaded
-document.addEventListener('DOMContentLoaded', () => {
-  predictiongraph();
-});
+import { Card, CardHeader, CardBody, CardFooter, CardTitle, Row, Col } from "reactstrap";
 
 function Dashboard() {
   const [chartData, setChartData] = useState({
     labels: [], // Initialize with an empty labels array
     datasets: [
       {
-        label: 'Loading...',
+        label: "Loading...",
         data: [], // Empty data array for initial render
-        borderColor: '#6bd098',
-        backgroundColor: 'rgba(107, 208, 152, 0.2)',
+        borderColor: "#6bd098",
+        backgroundColor: "rgba(107, 208, 152, 0.2)",
         fill: true,
       },
     ],
   });
 
-  // Use useEffect to set chart data when the component mounts
   useEffect(() => {
     async function loadChartData() {
-      console.log("Fetching chart data...");
-      if (predictiongraph && predictiongraph.data) {
-        console.log("Data loaded:", predictiongraph.data);
-        setChartData(predictiongraph.data); // Set the chart data state
-      } else {
-        console.log("No data available in predictiongraph.");
+      try {
+        // Fetch the CSV file
+        const response = await fetch("http://localhost:8080/energy_predictions.csv"); //change later when deployed using AWS, currently runnning a local server for testing
+        const csvText = await response.text();
+
+        // Parse the CSV file
+        const rows = csvText.split("\n").map((row) => row.split(","));
+        const labels = rows.slice(1).map((row) => row[0]); // First column as labels (e.g., time)
+        const hydroData = rows.slice(1).map((row) => parseFloat(row[1])); // Second column for hydro data
+        const nuclearData = rows.slice(1).map((row) => parseFloat(row[2])); 
+        const windData = rows.slice(1).map((row) => parseFloat(row[3]));
+        const solarData = rows.slice(1).map((row) => parseFloat(row[4])); 
+        // Update chart data
+        setChartData({
+          labels: labels,
+          datasets: [
+
+            {
+              label: "Hydro",
+              borderColor: "#6bd098",
+              backgroundColor: "#6bd098",
+              pointRadius: 1,
+              pointHoverRadius: 4,
+              borderWidth: 3,
+              tension: 0.4,
+              fill: false,
+              data: hydroData, // dynamic hydro data
+            },
+            {
+              label: "Nuclear",
+              borderColor: "#f17e5d",
+              backgroundColor: "#f17e5d",
+              pointRadius: 1,
+              pointHoverRadius: 0,
+              borderWidth: 3,
+              tension: 0.4,
+              fill: false,
+              data: nuclearData, // dynamic nuclear data
+            },
+            {
+              label: "Wind",
+              borderColor: "#fcc468",
+              backgroundColor: "#fcc468",
+              pointRadius: 1,
+              pointHoverRadius: 0,
+              borderWidth: 3,
+              tension: 0.4,
+              fill: false,
+              data: windData, // dynamic wind data
+            },
+            {
+              label: "Solar",
+              borderColor: "#1f8ef1",
+              backgroundColor: "#1f8ef1",
+              pointRadius: 1,
+              pointHoverRadius: 0,
+              borderWidth: 3,
+              tension: 0.4,
+              fill: false,
+              data: solarData, // dynamic solar data
+            },
+          ],
+        });
+      } catch (error) {
+        console.error("Error loading CSV data:", error);
       }
     }
 
     loadChartData();
   }, []);
 
-  console.log("Rendering chart with data:", chartData);
-  
   return (
     <>
       <div className="content">
@@ -181,28 +200,22 @@ function Dashboard() {
         </Row>
         <Row>
           <Col md="12">
-            <Card>
-              <CardHeader>
-                <CardTitle tag="h5">Generation Prediction</CardTitle>
-                <p className="card-category">24 Hours Forecast</p>
+          <Card >
+            <CardHeader>
+             <CardTitle tag="h5">Generation Prediction</CardTitle>
+                <p className="card-category">24 Hours Forecast (MW)</p>
               </CardHeader>
               <CardBody>
-              {chartData.labels && chartData.labels.length > 0 ? (
-                  <Line
-                    id="myChart"
-                    data={chartData} // Render chart with loaded data
-                    options={predictiongraph.options}
-                    width={400}
-                    height={100}
-                  />
-                ) : (
-                  <p>Loading chart data...</p>
-                )}
-              </CardBody>
+                 {chartData.labels.length > 0 ? (
+                 <Line data={chartData} options={{ responsive: true, maintainAspectRatio: false }} />
+                    ) : (
+                   <p>Loading chart data...</p>
+                     )}
+                </CardBody>
               <CardFooter>
                 <hr />
                 <div className="stats">
-                  <i className="fa fa-history" /> Updated 3 minutes ago
+                <i className="fa fa-history" /> Updated from CSV
                 </div>
               </CardFooter>
             </Card>
@@ -249,6 +262,7 @@ function Dashboard() {
                 <hr />
                 <div className="card-stats">
                   <i className="fa fa-check" /> Data information certified
+                  <i className="fa fa-history" /> Updated from CSV
                 </div>
               </CardFooter>
             </Card>
@@ -260,3 +274,4 @@ function Dashboard() {
 }
 
 export default Dashboard;
+
