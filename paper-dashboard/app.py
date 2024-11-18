@@ -10,20 +10,20 @@ DEVICE_IP = "192.168.0.11"  # Replace with your actual device IP
 
 # Function to turn on the device
 async def turn_on_device():
-    # plug = SmartPlug(DEVICE_IP)
+    plug = SmartPlug(DEVICE_IP)
     print("Turning on")
-    # await plug.update()
-    # await plug.turn_on()
-    # await plug.update()  # Update device state after turning it on
+    await plug.update()
+    await plug.turn_on()
+    await plug.update()  # Update device state after turning it on
 
 
 # Function to turn off the device
 async def turn_off_device():
-    # plug = SmartPlug(DEVICE_IP)
+    plug = SmartPlug(DEVICE_IP)
     print("Turning off")
-    # await plug.update()
-    # await plug.turn_off()
-    # await plug.update()  # Update device state after turning it off
+    await plug.update()
+    await plug.turn_off()
+    await plug.update()  # Update device state after turning it off
 
 
 # app.mount("/static", StaticFiles(directory="static"), name="static")
