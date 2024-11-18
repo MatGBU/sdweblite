@@ -56,34 +56,11 @@ function User() {
                   <p className="description">@chetfaker</p>
                 </div>
                 <p className="description text-center">
-                  "I like the way you work it <br />
-                  No diggity <br />I wanna bag it up"
+                  "I love Senior Design"
                 </p>
               </CardBody>
               <CardFooter>
-                <hr />
-                <div className="button-container">
-                  <Row>
-                    <Col className="ml-auto" lg="3" md="6" xs="6">
-                      <h5>
-                        12 <br />
-                        <small>Files</small>
-                      </h5>
-                    </Col>
-                    <Col className="ml-auto mr-auto" lg="4" md="6" xs="6">
-                      <h5>
-                        2GB <br />
-                        <small>Used</small>
-                      </h5>
-                    </Col>
-                    <Col className="mr-auto" lg="3">
-                      <h5>
-                        24,6$ <br />
-                        <small>Spent</small>
-                      </h5>
-                    </Col>
-                  </Row>
-                </div>
+
               </CardFooter>
             </Card>
 
@@ -111,7 +88,7 @@ function User() {
                       <FormGroup>
                         <label>Username</label>
                         <Input
-                          defaultValue="michael23"
+                          defaultValue="User"
                           placeholder="Username"
                           type="text"
                         />
@@ -122,7 +99,7 @@ function User() {
                         <label htmlFor="exampleInputEmail1">
                           Email address
                         </label>
-                        <Input placeholder="Email" type="email" />
+                        <Input placeholder="user@gmail.com" type="email" />
                       </FormGroup>
                     </Col>
                   </Row>

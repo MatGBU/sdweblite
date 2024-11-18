@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Line } from "react-chartjs-2";
+import { Line, Pie } from "react-chartjs-2";
 // reactstrap components
 import {
   Card,
@@ -14,97 +14,239 @@ import {
 // core components
 import { predictiongraph } from "../variables/charts.js";
 
-// Initialize the chart when the page is fully loaded
-document.addEventListener('DOMContentLoaded', () => {
-  predictiongraph();
-});
-
 function Dashboard() {
-  const [chartData, setChartData] = useState({
-    labels: [], // Initialize with an empty labels array
-    datasets: [
-      {
-        label: "Loading...",
-        data: [], // Empty data array for initial render
-        borderColor: "#6bd098",
-        backgroundColor: "rgba(107, 208, 152, 0.2)",
-        fill: true,
-      },
-    ],
+  const [lineChartData, setLineChartData] = useState({
+    labels: [],
+    datasets: [],
   });
 
+  const [pieChartData, setPieChartData] = useState({
+    labels: [],
+    datasets: [],
+  });
+
+  const [monthlyGenerationData, setMonthlyGenerationData] = useState({
+    labels: [],
+    datasets: [],
+  });
+
+  // Fetch data for the Line Chart
   useEffect(() => {
-    async function loadChartData() {
+    async function loadLineChartData() {
       try {
-        // Fetch the CSV file
-        const response = await fetch("http://localhost:8080/energy_predictions.csv"); //change later when deployed using AWS, currently runnning a local server for testing
+        const response = await fetch("http://localhost:8080/energy_predictions.csv");
         const csvText = await response.text();
 
-        // Parse the CSV file
+        // Parse the CSV
         const rows = csvText.split("\n").map((row) => row.split(","));
-        const labels = rows.slice(1).map((row) => row[0]); // First column as labels (e.g., time)
-        const hydroData = rows.slice(1).map((row) => parseFloat(row[1])); // Second column for hydro data
-        const nuclearData = rows.slice(1).map((row) => parseFloat(row[2])); 
-        const windData = rows.slice(1).map((row) => parseFloat(row[3]));
-        const solarData = rows.slice(1).map((row) => parseFloat(row[4])); 
-        // Update chart data
-        setChartData({
+        const headers = rows[0];
+        const dataRows = rows.slice(1).filter((row) => row.length === headers.length);
+
+        const labels = dataRows.map((row) => row[0]); // Dates as labels
+        const hydroData = dataRows.map((row) => parseFloat(row[1]) || 0); // Hydro
+        const nuclearData = dataRows.map((row) => parseFloat(row[2]) || 0); // Nuclear
+        const windData = dataRows.map((row) => parseFloat(row[3]) || 0); // Wind
+        const solarData = dataRows.map((row) => parseFloat(row[4]) || 0); // Solar
+
+        setLineChartData({
           labels: labels,
           datasets: [
-
             {
               label: "Hydro",
               borderColor: "#6bd098",
               backgroundColor: "#6bd098",
-              pointRadius: 1,
-              pointHoverRadius: 4,
-              borderWidth: 3,
-              tension: 0.4,
+              data: hydroData,
               fill: false,
-              data: hydroData, // dynamic hydro data
+              tension: 0.4,
+              borderWidth: 3,
             },
             {
               label: "Nuclear",
               borderColor: "#f17e5d",
               backgroundColor: "#f17e5d",
-              pointRadius: 1,
-              pointHoverRadius: 0,
-              borderWidth: 3,
-              tension: 0.4,
+              data: nuclearData,
               fill: false,
-              data: nuclearData, // dynamic nuclear data
+              tension: 0.4,
+              borderWidth: 3,
             },
             {
               label: "Wind",
               borderColor: "#fcc468",
               backgroundColor: "#fcc468",
-              pointRadius: 1,
-              pointHoverRadius: 0,
-              borderWidth: 3,
-              tension: 0.4,
+              data: windData,
               fill: false,
-              data: windData, // dynamic wind data
+              tension: 0.4,
+              borderWidth: 3,
             },
             {
               label: "Solar",
               borderColor: "#1f8ef1",
               backgroundColor: "#1f8ef1",
-              pointRadius: 1,
-              pointHoverRadius: 0,
-              borderWidth: 3,
-              tension: 0.4,
+              data: solarData,
               fill: false,
-              data: solarData, // dynamic solar data
+              tension: 0.4,
+              borderWidth: 3,
             },
           ],
         });
       } catch (error) {
-        console.error("Error loading CSV data:", error);
+        console.error("Error loading line chart data:", error);
       }
     }
 
-    loadChartData();
+    loadLineChartData();
   }, []);
+
+  // Fetch data for the Pie Chart
+  useEffect(() => {
+    async function loadPieChartData() {
+      try {
+        const response = await fetch("http://127.0.0.1:8080/TwoYear_Training_Set_Copy.csv");
+        const csvText = await response.text();
+
+        // Parse the CSV
+        const rows = csvText.split("\n").map((row) => row.split(","));
+        const headers = rows[0];
+        const dataRows = rows.slice(1).filter((row) => row.length === headers.length);
+
+        const technologyLabels = headers.slice(1, 12); // First 6 technologies
+        const technologyTotals = technologyLabels.map((tech, index) =>
+          dataRows.reduce((sum, row) => sum + parseFloat(row[index + 1] || 0), 0)
+        );
+
+        setPieChartData({
+          labels: technologyLabels,
+          datasets: [
+            {
+              label: "Total Generation",
+              data: technologyTotals,
+              backgroundColor: [
+                "#FF6384",
+                "#36A2EB",
+                "#FFCE56",
+                "#8BC34A",
+                "#FF5722",
+                "#9C27B0",
+              ],
+            },
+          ],
+        });
+      } catch (error) {
+        console.error("Error loading pie chart data:", error);
+      }
+    }
+
+    loadPieChartData();
+  }, []);
+
+// Fetch data for Monthly Generation Line Chart
+useEffect(() => {
+  async function loadMonthlyGenerationData() {
+    try {
+      const response = await fetch("http://127.0.0.1:8080/TwoYear_Training_Set_Copy.csv");
+      const csvText = await response.text();
+
+      // Parse CSV
+      const rows = csvText.split("\n").map((row) => row.split(","));
+      const headers = rows[0];
+      const dataRows = rows.slice(1).filter((row) => row.length === headers.length);
+
+      // Define months
+      const months = [
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+      ];
+
+      // Initialize data aggregation
+      const generationByMonth = months.map(() => ({
+        Coal: 0,
+        Hydro: 0,
+        "Natural Gas": 0,
+        Nuclear: 0,
+        Oil: 0,
+        Other: 0,
+      }));
+
+      // Group and aggregate data by month
+      dataRows.forEach((row) => {
+        const [beginDate, ...generationValues] = row;
+        const date = new Date(beginDate);
+        const monthIndex = date.getMonth(); // 0-based index for months
+
+        if (date.getFullYear() === new Date().getFullYear() - 1) {
+          generationByMonth[monthIndex].Coal += parseFloat(generationValues[0]) || 0;
+          generationByMonth[monthIndex].Hydro += parseFloat(generationValues[1]) || 0;
+          generationByMonth[monthIndex]["Natural Gas"] += parseFloat(generationValues[2]) || 0;
+          generationByMonth[monthIndex].Nuclear += parseFloat(generationValues[3]) || 0;
+          generationByMonth[monthIndex].Oil += parseFloat(generationValues[4]) || 0;
+          generationByMonth[monthIndex].Other += parseFloat(generationValues[5]) || 0;
+        }
+      });
+
+      // Prepare data for the line chart
+      setMonthlyGenerationData({
+        labels: months, // x-axis (months)
+        datasets: [
+          {
+            label: "Coal",
+            data: generationByMonth.map((month) => month.Coal),
+            borderColor: "#FF6384",
+            backgroundColor: "rgba(255, 99, 132, 0.2)",
+            fill: true,
+            tension: 0.4,
+          },
+          {
+            label: "Hydro",
+            data: generationByMonth.map((month) => month.Hydro),
+            borderColor: "#36A2EB",
+            backgroundColor: "rgba(54, 162, 235, 0.2)",
+            fill: true,
+            tension: 0.4,
+          },
+          {
+            label: "Natural Gas",
+            data: generationByMonth.map((month) => month["Natural Gas"]),
+            borderColor: "#FFCE56",
+            backgroundColor: "rgba(255, 206, 86, 0.2)",
+            fill: true,
+            tension: 0.4,
+          },
+          {
+            label: "Nuclear",
+            data: generationByMonth.map((month) => month.Nuclear),
+            borderColor: "#8BC34A",
+            backgroundColor: "rgba(139, 195, 74, 0.2)",
+            fill: true,
+            tension: 0.4,
+          },
+          {
+            label: "Oil",
+            data: generationByMonth.map((month) => month.Oil),
+            borderColor: "#FF5722",
+            backgroundColor: "rgba(255, 87, 34, 0.2)",
+            fill: true,
+            tension: 0.4,
+          },
+          {
+            label: "Other",
+            data: generationByMonth.map((month) => month.Other),
+            borderColor: "#9C27B0",
+            backgroundColor: "rgba(156, 39, 176, 0.2)",
+            fill: true,
+            tension: 0.4,
+          },
+        ],
+      });
+    } catch (error) {
+      console.error("Error loading monthly generation data:", error);
+    }
+  }
+
+  loadMonthlyGenerationData();
+}, []);
+
+
+
 
   return (
     <>
@@ -223,17 +365,17 @@ function Dashboard() {
                 <p className="card-category">24 Hours Forecast (MW)</p>
               </CardHeader>
               <CardBody>
-              {chartData.labels && chartData.labels.length > 0 ? (
-                  <Line
-                    id='myChart'
-                    data={chartData} // Render chart with loaded data
-                    options={predictiongraph.options}
-                    width={400}
-                    height={100}
-                  />
-                ) : (
-                  <p>Loading chart data...</p>
-                )}
+              {lineChartData.labels.length > 0 ? (
+                <Line
+                  id="lineChart"
+                  data={lineChartData}
+                  options={predictiongraph.options}
+                  width={600}
+                  length={100}
+                />
+              ) : (
+                <p>Loading line chart data...</p>
+              )}
               </CardBody>
               <CardFooter>
                 <hr />
@@ -249,19 +391,16 @@ function Dashboard() {
             <Card>
               <CardHeader>
                 <CardTitle tag="h5">Generation Breakdown</CardTitle>
-                <p className="card-category">Last Month's Performance</p>
+                <p className="card-category">Last Year's Performance (MW)</p>
               </CardHeader>
-              <CardBody style={{ height: "266px" }}>
-               
+              <CardBody style={{ height: "430px" }}>
+              {pieChartData.labels.length > 0 ? (
+                <Pie id="pieChart" data={pieChartData} />
+              ) : (
+                <p>Loading pie chart data...</p>
+              )}
               </CardBody> 
               <CardFooter>
-                <div className="legend">
-                  <i className="fa fa-circle text-primary" /> Hydro{" "}
-                  <i className="fa fa-circle text-warning" /> Solar{" "}
-                  <i className="fa fa-circle text-danger" /> Wind{" "}
-                  <i className="fa fa-circle text-gray" /> Coal
-                </div>
-                <hr />
                 <div className="stats">
                   <i i className="fa fa-history" /> Updated from CSV
                 </div>
@@ -275,13 +414,14 @@ function Dashboard() {
                 <p className="card-category">Per Month</p>
               </CardHeader>
               <CardBody>
-              
+              {monthlyGenerationData.labels.length > 0 ? (
+                <Line id="monthlyLineChart" data={monthlyGenerationData} />
+              ) : (
+                <p>Loading monthly generation data...</p>
+              )}
               </CardBody>
               <CardFooter>
-                <div className="chart-legend">
-                  <i className="fa fa-circle text-info" /> Hydro{" "}
-                  <i className="fa fa-circle text-warning" /> Solar
-                </div>
+
                 <hr />
                 <div className="card-stats">
                   <i i className="fa fa-history" /> Updated from CSV
