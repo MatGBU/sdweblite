@@ -1,0 +1,3 @@
+env/
+paper-dashboard/node_modules/
+paper-dashboard/package-lock.json
