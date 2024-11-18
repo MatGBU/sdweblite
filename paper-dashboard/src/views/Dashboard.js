@@ -225,7 +225,7 @@ function Dashboard() {
               <CardBody>
               {chartData.labels && chartData.labels.length > 0 ? (
                   <Line
-                    id="myChart"
+                    id='myChart'
                     data={chartData} // Render chart with loaded data
                     options={predictiongraph.options}
                     width={400}
@@ -263,7 +263,7 @@ function Dashboard() {
                 </div>
                 <hr />
                 <div className="stats">
-                  <i className="fa fa-calendar" /> TEST
+                  <i i className="fa fa-history" /> Updated from CSV
                 </div>
               </CardFooter>
             </Card>
@@ -284,8 +284,7 @@ function Dashboard() {
                 </div>
                 <hr />
                 <div className="card-stats">
-                  <i className="fa fa-check" /> Data information certified
-                  <i className="fa fa-history" /> Updated from CSV
+                  <i i className="fa fa-history" /> Updated from CSV
                 </div>
               </CardFooter>
             </Card>
