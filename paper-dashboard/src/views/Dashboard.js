@@ -15,7 +15,7 @@ import {
 import { predictiongraph } from "../variables/charts.js";
 
 function Dashboard() {
-  const [lineChartData, setLineChartData] = useState({
+  const [lineChartDataone, setLineChartDataone] = useState({
     labels: [],
     datasets: [],
   });
@@ -25,14 +25,14 @@ function Dashboard() {
     datasets: [],
   });
 
-  const [monthlyGenerationData, setMonthlyGenerationData] = useState({
+  const [lineChartDatatwo, setLineChartDatatwo] = useState({
     labels: [],
     datasets: [],
   });
 
-  // Fetch data for the Line Chart
+  // Fetch data for the first Line Chart
   useEffect(() => {
-    async function loadLineChartData() {
+    async function loadLineChartDataone() {
       try {
         const response = await fetch("http://localhost:8080/energy_predictions.csv");
         const csvText = await response.text();
@@ -48,7 +48,7 @@ function Dashboard() {
         const windData = dataRows.map((row) => parseFloat(row[3]) || 0); // Wind
         const solarData = dataRows.map((row) => parseFloat(row[4]) || 0); // Solar
 
-        setLineChartData({
+        setLineChartDataone({
           labels: labels,
           datasets: [
             {
@@ -94,7 +94,7 @@ function Dashboard() {
       }
     }
 
-    loadLineChartData();
+    loadLineChartDataone();
   }, []);
 
   // Fetch data for the Pie Chart
@@ -109,7 +109,7 @@ function Dashboard() {
         const headers = rows[0];
         const dataRows = rows.slice(1).filter((row) => row.length === headers.length);
 
-        const technologyLabels = headers.slice(1, 12); // First 6 technologies
+        const technologyLabels = headers.slice(1, 12); // First 12 technologies
         const technologyTotals = technologyLabels.map((tech, index) =>
           dataRows.reduce((sum, row) => sum + parseFloat(row[index + 1] || 0), 0)
         );
@@ -139,111 +139,53 @@ function Dashboard() {
     loadPieChartData();
   }, []);
 
-// Fetch data for Monthly Generation Line Chart
+// Fetch data for the second Line Chart
 useEffect(() => {
-  async function loadMonthlyGenerationData() {
+  async function loadLineChartDatatwo() {
     try {
-      const response = await fetch("http://127.0.0.1:8080/TwoYear_Training_Set_Copy.csv");
+      const response = await fetch("http://localhost:8080/energy_predictions.csv");
       const csvText = await response.text();
 
-      // Parse CSV
+      // Parse the CSV
       const rows = csvText.split("\n").map((row) => row.split(","));
       const headers = rows[0];
       const dataRows = rows.slice(1).filter((row) => row.length === headers.length);
 
-      // Define months
-      const months = [
-        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-      ];
+      const labels = dataRows.map((row) => row[0]); // Dates as labels
+      const refuseData = dataRows.map((row) => parseFloat(row[5]) || 0); // refuse
+      const woodData = dataRows.map((row) => parseFloat(row[6]) || 0); // wood
 
-      // Initialize data aggregation
-      const generationByMonth = months.map(() => ({
-        Coal: 0,
-        Hydro: 0,
-        "Natural Gas": 0,
-        Nuclear: 0,
-        Oil: 0,
-        Other: 0,
-      }));
-
-      // Group and aggregate data by month
-      dataRows.forEach((row) => {
-        const [beginDate, ...generationValues] = row;
-        const date = new Date(beginDate);
-        const monthIndex = date.getMonth(); // 0-based index for months
-
-        if (date.getFullYear() === new Date().getFullYear() - 1) {
-          generationByMonth[monthIndex].Coal += parseFloat(generationValues[0]) || 0;
-          generationByMonth[monthIndex].Hydro += parseFloat(generationValues[1]) || 0;
-          generationByMonth[monthIndex]["Natural Gas"] += parseFloat(generationValues[2]) || 0;
-          generationByMonth[monthIndex].Nuclear += parseFloat(generationValues[3]) || 0;
-          generationByMonth[monthIndex].Oil += parseFloat(generationValues[4]) || 0;
-          generationByMonth[monthIndex].Other += parseFloat(generationValues[5]) || 0;
-        }
-      });
-
-      // Prepare data for the line chart
-      setMonthlyGenerationData({
-        labels: months, // x-axis (months)
+      setLineChartDatatwo({
+        labels: labels,
         datasets: [
           {
-            label: "Coal",
-            data: generationByMonth.map((month) => month.Coal),
-            borderColor: "#FF6384",
-            backgroundColor: "rgba(255, 99, 132, 0.2)",
-            fill: true,
+            label: "Refuse",
+            borderColor: "#6bd098",
+            backgroundColor: "#6bd098",
+            data: refuseData,
+            fill: false,
             tension: 0.4,
+            borderWidth: 3,
           },
           {
-            label: "Hydro",
-            data: generationByMonth.map((month) => month.Hydro),
-            borderColor: "#36A2EB",
-            backgroundColor: "rgba(54, 162, 235, 0.2)",
-            fill: true,
+            label: "Wood",
+            borderColor: "#f17e5d",
+            backgroundColor: "#f17e5d",
+            data: woodData,
+            fill: false,
             tension: 0.4,
-          },
-          {
-            label: "Natural Gas",
-            data: generationByMonth.map((month) => month["Natural Gas"]),
-            borderColor: "#FFCE56",
-            backgroundColor: "rgba(255, 206, 86, 0.2)",
-            fill: true,
-            tension: 0.4,
-          },
-          {
-            label: "Nuclear",
-            data: generationByMonth.map((month) => month.Nuclear),
-            borderColor: "#8BC34A",
-            backgroundColor: "rgba(139, 195, 74, 0.2)",
-            fill: true,
-            tension: 0.4,
-          },
-          {
-            label: "Oil",
-            data: generationByMonth.map((month) => month.Oil),
-            borderColor: "#FF5722",
-            backgroundColor: "rgba(255, 87, 34, 0.2)",
-            fill: true,
-            tension: 0.4,
-          },
-          {
-            label: "Other",
-            data: generationByMonth.map((month) => month.Other),
-            borderColor: "#9C27B0",
-            backgroundColor: "rgba(156, 39, 176, 0.2)",
-            fill: true,
-            tension: 0.4,
+            borderWidth: 3,
           },
         ],
       });
     } catch (error) {
-      console.error("Error loading monthly generation data:", error);
+      console.error("Error loading line chart data:", error);
     }
   }
 
-  loadMonthlyGenerationData();
+  loadLineChartDatatwo();
 }, []);
+
 
 
 
@@ -365,10 +307,10 @@ useEffect(() => {
                 <p className="card-category">24 Hours Forecast (MW)</p>
               </CardHeader>
               <CardBody>
-              {lineChartData.labels.length > 0 ? (
+              {lineChartDataone.labels.length > 0 ? (
                 <Line
                   id="lineChart"
-                  data={lineChartData}
+                  data={lineChartDataone}
                   options={predictiongraph.options}
                   width={600}
                   length={100}
@@ -410,14 +352,19 @@ useEffect(() => {
           <Col md="8">
             <Card className="card-chart">
               <CardHeader>
-                <CardTitle tag="h5">Yearly Generation</CardTitle>
-                <p className="card-category">Per Month</p>
+                <CardTitle tag="h5">Generation Prediction</CardTitle>
+                <p className="card-category">24 Hour Forecast (MW)</p>
               </CardHeader>
               <CardBody>
-              {monthlyGenerationData.labels.length > 0 ? (
-                <Line id="monthlyLineChart" data={monthlyGenerationData} />
+              {lineChartDatatwo.labels.length > 0 ? (
+                <Line
+                  id="lineChart"
+                  data={lineChartDatatwo}
+                  options={predictiongraph.options}
+                  height = "129px"
+                />
               ) : (
-                <p>Loading monthly generation data...</p>
+                <p>Loading line chart data...</p>
               )}
               </CardBody>
               <CardFooter>
