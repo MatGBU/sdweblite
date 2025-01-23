@@ -20,11 +20,14 @@ password = 'Mq75eg8pxTBCEKY'
     
 def pullAllData(weatherCSVFilename, fuelCSVFilename):
     # weather data
-
     pullWeatherData(csv_filename=weatherCSVFilename)
 
     # fuel data
     pullFuelData(output_filename=fuelCSVFilename)
+
+    # combine data into one file
+
+
 
     
 
@@ -252,4 +255,62 @@ def write_to_csv(data, filename, append=False):
         for row in data:
             if row[0] not in existing_timestamps:  # Avoid double writes
                 writer.writerow(row)
+    
+def combineDataTables(weather, fuel, OUTPUT_PATH):
+    weather_data = pd.read_csv(weather)
+    fuel_data = pd.read_csv(fuel)
+    
 
+    weather['datetime'] = pd.to_datetime(weather['datetime'])
+
+    if weather_data['datetime'].dt.tz is None:
+        weather_data['datetime'] = weather_data['datetime'].dt.tz_localize('UTC')
+    else:
+        weather_data['datetime'] = weather_data['datetime'].dt.tz_convert('UTC')
+
+    print("BeginDate column before conversion:")
+    print(fuel_data['BeginDate'].head())
+
+    # Convert 'BeginDate' in fuel data to datetime format with explicit UTC conversion
+    fuel_data['BeginDate'] = pd.to_datetime(fuel_data['BeginDate'], errors='coerce', utc=True)
+
+    # Print the 'BeginDate' column after conversion to check if conversion was successful
+    print("BeginDate column after conversion:")
+    print(fuel_data['BeginDate'].head())
+
+    # Check for any invalid dates (if any)
+    invalid_dates = fuel_data[fuel_data['BeginDate'].isna()]
+    if not invalid_dates.empty:
+        print("Invalid 'BeginDate' entries found:")
+        print(invalid_dates)
+        # Optionally, drop rows with invalid 'BeginDate'
+        fuel_data = fuel_data.dropna(subset=['BeginDate'])
+
+    # Round 'BeginDate' in the fuel data to the nearest hour
+    fuel_data['rounded_hour'] = fuel_data['BeginDate'].dt.round('h')
+
+    # Sort both DataFrames by time for 'merge_asof' to work
+    fuel_data = fuel_data.sort_values('rounded_hour')
+    weather_data = weather_data.sort_values('datetime')
+
+    # Perform the merge_asof to match the nearest hour in the weather data for each fuel data entry
+    combined_data = pd.merge_asof(fuel_data, weather_data, left_on='rounded_hour', right_on='datetime', direction='backward')
+
+    # Drop the 'rounded_hour' column since it's no longer needed
+    combined_data = combined_data.drop(columns=['rounded_hour'])
+    combined_data = combined_data.sort_values('BeginDate')
+
+    # Save the combined data to a new CSV file
+
+    combined_data.to_csv(OUTPUT_PATH, index=False)
+
+    print(f"Data combined and saved to {OUTPUT_PATH}")
+
+
+
+if __name__ == "__main__":
+    WEATHER_DATA_CSV = 'weatherTestBen.csv'
+    FUEL_DATA_CSV = 'fuelTestBen.csv'
+    OUTPUT_PATH = 'fuelWeatherCombinedTestBen.csv'
+    pullAllData(WEATHER_DATA_CSV, FUEL_DATA_CSV)
+    combineDataTables(WEATHER_DATA_CSV, FUEL_DATA_CSV, OUTPUT_PATH)
