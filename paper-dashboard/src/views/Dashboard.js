@@ -34,8 +34,9 @@ function Dashboard() {
   useEffect(() => {
     async function loadLineChartDataone() {
       try {
-        const response = await fetch("http://localhost:8080/energy_predictions.csv");
+        const response = await fetch("/energy_predictions.csv");
         const csvText = await response.text();
+        console.log(csvText);
 
         // Parse the CSV
         const rows = csvText.split("\n").map((row) => row.split(","));
@@ -101,7 +102,7 @@ function Dashboard() {
   useEffect(() => {
     async function loadPieChartData() {
       try {
-        const response = await fetch("http://127.0.0.1:8080/TwoYear_Training_Set_Copy.csv");
+        const response = await fetch("/TwoYear_Training_Set_Copy.csv");
         const csvText = await response.text();
 
         // Parse the CSV
@@ -139,56 +140,52 @@ function Dashboard() {
     loadPieChartData();
   }, []);
 
-// Fetch data for the second Line Chart
-useEffect(() => {
-  async function loadLineChartDatatwo() {
-    try {
-      const response = await fetch("http://localhost:8080/energy_predictions.csv");
-      const csvText = await response.text();
+  // Fetch data for the second Line Chart
+  useEffect(() => {
+    async function loadLineChartDatatwo() {
+      try {
+        const response = await fetch("/energy_predictions.csv");
+        const csvText = await response.text();
 
-      // Parse the CSV
-      const rows = csvText.split("\n").map((row) => row.split(","));
-      const headers = rows[0];
-      const dataRows = rows.slice(1).filter((row) => row.length === headers.length);
+        // Parse the CSV
+        const rows = csvText.split("\n").map((row) => row.split(","));
+        const headers = rows[0];
+        const dataRows = rows.slice(1).filter((row) => row.length === headers.length);
 
-      const labels = dataRows.map((row) => row[0]); // Dates as labels
-      const refuseData = dataRows.map((row) => parseFloat(row[5]) || 0); // refuse
-      const woodData = dataRows.map((row) => parseFloat(row[6]) || 0); // wood
+        const labels = dataRows.map((row) => row[0]); // Dates as labels
+        const refuseData = dataRows.map((row) => parseFloat(row[5]) || 0); // refuse
+        const woodData = dataRows.map((row) => parseFloat(row[6]) || 0); // wood
 
-      setLineChartDatatwo({
-        labels: labels,
-        datasets: [
-          {
-            label: "Refuse",
-            borderColor: "#6bd098",
-            backgroundColor: "#6bd098",
-            data: refuseData,
-            fill: false,
-            tension: 0.4,
-            borderWidth: 3,
-          },
-          {
-            label: "Wood",
-            borderColor: "#f17e5d",
-            backgroundColor: "#f17e5d",
-            data: woodData,
-            fill: false,
-            tension: 0.4,
-            borderWidth: 3,
-          },
-        ],
-      });
-    } catch (error) {
-      console.error("Error loading line chart data:", error);
+        setLineChartDatatwo({
+          labels: labels,
+          datasets: [
+            {
+              label: "Refuse",
+              borderColor: "#6bd098",
+              backgroundColor: "#6bd098",
+              data: refuseData,
+              fill: false,
+              tension: 0.4,
+              borderWidth: 3,
+            },
+            {
+              label: "Wood",
+              borderColor: "#f17e5d",
+              backgroundColor: "#f17e5d",
+              data: woodData,
+              fill: false,
+              tension: 0.4,
+              borderWidth: 3,
+            },
+          ],
+        });
+      } catch (error) {
+        console.error("Error loading line chart data:", error);
+      }
     }
-  }
 
-  loadLineChartDatatwo();
-}, []);
-
-
-
-
+    loadLineChartDatatwo();
+  }, []);
 
   return (
     <>
@@ -304,7 +301,7 @@ useEffect(() => {
           <Card >
             <CardHeader>
              <CardTitle tag="h5">Generation Prediction</CardTitle>
-                <p className="card-category">24 Hours Forecast (MW)</p>
+                <p className="card-category">48 Hour Forecast (MW)</p>
               </CardHeader>
               <CardBody>
               {lineChartDataone.labels.length > 0 ? (
@@ -353,7 +350,7 @@ useEffect(() => {
             <Card className="card-chart">
               <CardHeader>
                 <CardTitle tag="h5">Generation Prediction</CardTitle>
-                <p className="card-category">24 Hour Forecast (MW)</p>
+                <p className="card-category">48 Hour Forecast (MW)</p>
               </CardHeader>
               <CardBody>
               {lineChartDatatwo.labels.length > 0 ? (

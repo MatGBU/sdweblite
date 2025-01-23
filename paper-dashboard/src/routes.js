@@ -27,6 +27,10 @@ import UserPage from "views/User.js";
 const getRoutes = (isLoggedIn) => {
   // Common routes that are always visible
   const commonRoutes = [
+  ];
+
+  // Routes that are only visible to logged-in users
+  const loggedInRoutes = [
     {
       path: "/dashboard",
       name: "Dashboard",
@@ -41,10 +45,6 @@ const getRoutes = (isLoggedIn) => {
       component: <Notifications />,
       layout: "/admin",
     },
-  ];
-
-  // Routes that are only visible to logged-in users
-  const loggedInRoutes = [
     {
       path: "/devices",
       name: "Devices",
