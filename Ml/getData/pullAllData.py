@@ -20,11 +20,14 @@ password = 'Mq75eg8pxTBCEKY'
     
 def pullAllData(weatherCSVFilename, fuelCSVFilename):
     # weather data
-
     pullWeatherData(csv_filename=weatherCSVFilename)
 
     # fuel data
     pullFuelData(output_filename=fuelCSVFilename)
+
+    # combine data into one file
+
+
 
     
 
@@ -254,4 +257,3 @@ def write_to_csv(data, filename, append=False):
             if row[0] not in existing_timestamps:  # Avoid double writes
                 writer.writerow(row)
 
-pullAllData('Year_weather.csv','genfuelmix_aggregatedyear.csv')
