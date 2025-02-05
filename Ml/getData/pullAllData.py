@@ -48,14 +48,15 @@ def pullWeatherData(csv_filename):
         print("No new data to fetch, the CSV is already up to date.")
 
 def get_latest_date_from_csv(file_path):
-    try:
-        df = pd.read_csv(file_path)
-        df['datetime'] = pd.to_datetime(df['datetime'])  # Ensure the datetime column is in datetime format
-        latest_date = df['datetime'].max().date()  # Get the latest date in the file
-        return latest_date
-    except FileNotFoundError:
-        # If the file doesn't exist, return None to indicate no previous data
-        return None
+ df = pd.read_csv(file_path)  
+ print(df.columns)  # Debugging step
+ if 'datetime' in df.columns:
+    df['datetime'] = pd.to_datetime(df['datetime'], format='%Y-%m-%dT%H:%M:%S', errors='coerce')
+    latest_date = df['datetime'].max().date()
+    print(latest_date)
+ else:
+    print("Column 'datetime' not found. Available columns:", df.columns)
+ return None
 
 def fetch_weather_data(start_date, end_date, output_file):
     # Format the dates for the API request (YYYY-MM-DD)
@@ -253,3 +254,4 @@ def write_to_csv(data, filename, append=False):
             if row[0] not in existing_timestamps:  # Avoid double writes
                 writer.writerow(row)
 
+pullAllData('Year_weather.csv','genfuelmix_aggregatedyear.csv')
