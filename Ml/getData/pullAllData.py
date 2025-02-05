@@ -18,7 +18,7 @@ url_template = "https://webservices.iso-ne.com/api/v1.1/genfuelmix/day/{}"
 username = 'alean@bu.edu'
 password = 'Mq75eg8pxTBCEKY'
     
-def pullAllData(weatherCSVFilename, fuelCSVFilename):
+def pullAllData(weatherCSVFilename, fuelCSVFilename,OUTPUTPATH):
     # weather data
     pullWeatherData(csv_filename=weatherCSVFilename)
 
@@ -26,10 +26,7 @@ def pullAllData(weatherCSVFilename, fuelCSVFilename):
     pullFuelData(output_filename=fuelCSVFilename)
 
     # combine data into one file
-
-
-
-    
+    combine_data(weatherCSVFilename,fuelCSVFilename,OUTPUTPATH)
 
 def pullWeatherData(csv_filename):
     today = datetime.today().date()
@@ -121,6 +118,63 @@ def pullFuelData(output_filename):
     write_to_csv(aggregated_data, output_filename, append=True)
     print(f"Data aggregation complete. Output written to {output_filename}")
 
+def combine_data(weatherCSVFilename,fuelCSVFilename,OUTPUTPATH):
+    "Funcrtion to combine the data that has been pulled in the last two functions"
+    # Load the weather data CSV
+    weather_data = pd.read_csv(weatherCSVFilename)  # Replace with the actual file path
+
+    # Load the fuel mix data CSV
+    fuel_data = pd.read_csv(fuelCSVFilename)  # Replace with the actual file path
+
+    # Convert 'datetime' in weather data to datetime format
+    weather_data['datetime'] = pd.to_datetime(weather_data['datetime'])
+
+    # Convert 'datetime' in weather data to UTC to match the fuel data time zones
+    if weather_data['datetime'].dt.tz is None:
+        weather_data['datetime'] = weather_data['datetime'].dt.tz_localize('UTC')
+    else:
+        weather_data['datetime'] = weather_data['datetime'].dt.tz_convert('UTC')
+
+    # Print the 'BeginDate' column for inspection
+    print("BeginDate column before conversion:")
+    print(fuel_data['BeginDate'].head())
+
+    # Convert 'BeginDate' in fuel data to datetime format with explicit UTC conversion
+    fuel_data['BeginDate'] = pd.to_datetime(fuel_data['BeginDate'], errors='coerce', utc=True)
+
+    # Print the 'BeginDate' column after conversion to check if conversion was successful
+    print("BeginDate column after conversion:")
+    print(fuel_data['BeginDate'].head())
+
+    # Check for any invalid dates (if any)
+    invalid_dates = fuel_data[fuel_data['BeginDate'].isna()]
+    if not invalid_dates.empty:
+        print("Invalid 'BeginDate' entries found:")
+        print(invalid_dates)
+        # Optionally, drop rows with invalid 'BeginDate'
+        fuel_data = fuel_data.dropna(subset=['BeginDate'])
+
+    # Round 'BeginDate' in the fuel data to the nearest hour
+    fuel_data['rounded_hour'] = fuel_data['BeginDate'].dt.round('h')
+
+    # Sort both DataFrames by time for 'merge_asof' to work
+    fuel_data = fuel_data.sort_values('rounded_hour')
+    weather_data = weather_data.sort_values('datetime')
+
+    # Perform the merge_asof to match the nearest hour in the weather data for each fuel data entry
+    combined_data = pd.merge_asof(fuel_data, weather_data, left_on='rounded_hour', right_on='datetime', direction='backward')
+
+    # Drop the 'rounded_hour' column since it's no longer needed
+    combined_data = combined_data.drop(columns=['rounded_hour'])
+    combined_data = combined_data.sort_values('BeginDate')
+
+    # Save the combined data to a new CSV file
+
+    combined_data.to_csv(OUTPUTPATH, index=False)
+
+    print(f"Data combined and saved to {OUTPUTPATH}")
+
+    return None 
 
 def fill_previous_date(last_timestamp):
     """
@@ -257,3 +311,4 @@ def write_to_csv(data, filename, append=False):
             if row[0] not in existing_timestamps:  # Avoid double writes
                 writer.writerow(row)
 
+pullAllData("Year_weather.csv","genfuelmix_aggregatedyear.csv","AutoCombine.csv")
