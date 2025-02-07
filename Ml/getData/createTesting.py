@@ -25,11 +25,13 @@ iso_csv_file = "hourly_load_forecast.csv"
 weather_csv_file = "weather_forecast_test.csv"
 output_csv = "testing.csv"
 
+
 # Run the script
 def gather_combine_testing():
     isotestdata(start_date, end_date, iso_csv_file)
     weathertestdata(start_date, end_date, weather_csv_file)
-    combine(weather_csv_file,iso_csv_file,output_csv)
+    combine(weather_csv_file, iso_csv_file, output_csv)
+
 
 def fetch_data(date):
     url = f"{base_url}{date}"
@@ -40,6 +42,7 @@ def fetch_data(date):
     else:
         print(f"Error fetching data for {date}: {response.status_code}, {response.text}")
         return None
+
 
 # Function to parse XML and save to CSV
 def parse_and_save_to_csv(xml_data, csv_file):
@@ -72,10 +75,12 @@ def parse_and_save_to_csv(xml_data, csv_file):
 
             writer.writerow([begin_date, load_mw])
 
+
 # Helper function to safely extract text
 def safe_find_text(element, tag, namespace):
     found = element.find(tag, namespace)
     return found.text if found is not None else None
+
 
 # Main function to iterate over dates and process data
 def isotestdata(start_date, end_date, csv_file):
@@ -90,7 +95,8 @@ def isotestdata(start_date, end_date, csv_file):
         current_date += timedelta(days=1)
     print(f"Data saved to {csv_file}")
 
-def weathertestdata(start_date,end_date,weather_csv_file):
+
+def weathertestdata(start_date, end_date, weather_csv_file):
     # Format the dates in the required format (YYYY-MM-DD)
     start_date_str = start_date.strftime('%Y-%m-%d')
     end_date_str = end_date.strftime('%Y-%m-%d')
@@ -112,6 +118,7 @@ def weathertestdata(start_date,end_date,weather_csv_file):
             writer.writerow(row)
 
     print(f"Weather data for the next three days has been saved as '{weather_csv_file}'")
+
 
 def combine(WEATHER, FUEL, OUTPUTPATH): 
     # Load the weather data CSV
@@ -164,7 +171,6 @@ def combine(WEATHER, FUEL, OUTPUTPATH):
     combined_data.to_csv(OUTPUTPATH, index=False)
 
     print(f"Data combined and saved to {OUTPUTPATH}")
-
 
 
 gather_combine_testing()

@@ -18,6 +18,7 @@ url_template = "https://webservices.iso-ne.com/api/v1.1/genfuelmix/day/{}"
 username = 'alean@bu.edu'
 password = 'Mq75eg8pxTBCEKY'
     
+
 def pullAllData(weatherCSVFilename, fuelCSVFilename,OUTPUTPATH):
     # weather data
     pullWeatherData(csv_filename=weatherCSVFilename)
@@ -27,6 +28,7 @@ def pullAllData(weatherCSVFilename, fuelCSVFilename,OUTPUTPATH):
 
     # combine data into one file
     combine_data(weatherCSVFilename,fuelCSVFilename,OUTPUTPATH)
+
 
 def pullWeatherData(csv_filename):
     today = datetime.today().date()
@@ -47,16 +49,18 @@ def pullWeatherData(csv_filename):
     else:
         print("No new data to fetch, the CSV is already up to date.")
 
+
 def get_latest_date_from_csv(file_path):
- df = pd.read_csv(file_path)  
- print(df.columns)  # Debugging step
- if 'datetime' in df.columns:
-    df['datetime'] = pd.to_datetime(df['datetime'], format='%Y-%m-%dT%H:%M:%S', errors='coerce')
-    latest_date = df['datetime'].max().date()
-    print(latest_date)
- else:
-    print("Column 'datetime' not found. Available columns:", df.columns)
- return None
+    df = pd.read_csv(file_path)  
+    print(df.columns)  # Debugging step
+    if 'datetime' in df.columns:
+        df['datetime'] = pd.to_datetime(df['datetime'], format='%Y-%m-%dT%H:%M:%S', errors='coerce')
+        latest_date = df['datetime'].max().date()
+        print(latest_date)
+    else:
+        print("Column 'datetime' not found. Available columns:", df.columns)
+    return None
+
 
 def fetch_weather_data(start_date, end_date, output_file):
     # Format the dates for the API request (YYYY-MM-DD)
@@ -65,7 +69,7 @@ def fetch_weather_data(start_date, end_date, output_file):
 
     # Weather API URL with dynamic dates
     url = f"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/Boston%2CUnited%20States/{start_date_str}/{end_date_str}?unitGroup=us&elements=datetime%2Ctemp%2Cdew%2Chumidity%2Cprecip%2Cpreciptype%2Csnow%2Csnowdepth%2Cwindgust%2Cwindspeed%2Cwinddir%2Cpressure%2Ccloudcover%2Csolarradiation%2Csolarenergy%2Cuvindex%2Csevererisk&include=hours&key=SRGBWC4W94EFX6RMJXBC4L6EN&contentType=csv"
-    
+
     response = requests.get(url)
 
     if response.status_code != 200:
@@ -89,7 +93,7 @@ def fetch_weather_data(start_date, end_date, output_file):
 
 def pullFuelData(output_filename):
     last_updated_date = get_last_updated_date(output_filename)
-    
+
     if last_updated_date:
         # Set the start date as midnight of the day before the last timestamp
         start_date = fill_previous_date(last_updated_date.strftime('%Y-%m-%d %H:%M:%S%z'))
@@ -118,7 +122,8 @@ def pullFuelData(output_filename):
     write_to_csv(aggregated_data, output_filename, append=True)
     print(f"Data aggregation complete. Output written to {output_filename}")
 
-def combine_data(weatherCSVFilename,fuelCSVFilename,OUTPUTPATH):
+
+def combine_data(weatherCSVFilename, fuelCSVFilename, OUTPUTPATH):
     "Funcrtion to combine the data that has been pulled in the last two functions"
     # Load the weather data CSV
     weather_data = pd.read_csv(weatherCSVFilename)  # Replace with the actual file path
@@ -190,6 +195,7 @@ def fill_previous_date(last_timestamp):
     
     return start_date
 
+
 def get_last_updated_date(filename):
     if not os.path.exists(filename):
         return None  # If file doesn't exist, return None
@@ -230,6 +236,7 @@ def timestamp_exists(filename, timestamp):
                 return True
     return False
 
+
 # Function to get data from the API for a specific date
 def get_fuelmix_data_for_date(date):
     url = url_template.format(date)
@@ -240,6 +247,7 @@ def get_fuelmix_data_for_date(date):
     else:
         print(f"Failed to retrieve data for {date}: {response.status_code}")
         return None
+
 
 # Function to parse the XML response and organize data by timestamp
 def parse_fuelmix_data(xml_data):
@@ -278,6 +286,7 @@ def parse_fuelmix_data(xml_data):
     
     return data_rows
 
+
 # Function to write aggregated data to CSV, ensuring no extra blank lines
 def load_existing_timestamps(filename):
     timestamps = set()
@@ -289,6 +298,7 @@ def load_existing_timestamps(filename):
                 if len(row) > 0:
                     timestamps.add(row[0])
     return timestamps
+
 
 # Updated write_to_csv
 def write_to_csv(data, filename, append=False):
@@ -311,4 +321,5 @@ def write_to_csv(data, filename, append=False):
             if row[0] not in existing_timestamps:  # Avoid double writes
                 writer.writerow(row)
 
-pullAllData("Year_weather.csv","genfuelmix_aggregatedyear.csv","AutoCombine.csv")
+
+pullAllData("Year_weather.csv", "genfuelmix_aggregatedyear.csv", "AutoCombine.csv")
