@@ -13,9 +13,9 @@ import {
 
 function Devices() {
   // Function to handle "Turn On" button click
-  const handleTurnOn = () => {
+  const handleTurnOn = (input) => {
     axios
-      .get("http://127.0.0.1:8000/turn_on")  // FastAPI backend URL
+      .get(`http://127.0.0.1:8000/turn_on?input=${input}`)  // FastAPI backend URL
       .then((response) => {
         console.log(response.data.status);  // Log the response message
       })
@@ -25,9 +25,9 @@ function Devices() {
   };
 
   // Function to handle "Turn Off" button click
-  const handleTurnOff = () => {
+  const handleTurnOff = (input) => {
     axios
-      .get("http://127.0.0.1:8000/turn_off")  // FastAPI backend URL
+      .get(`http://127.0.0.1:8000/turn_off?input=${input}`)  // FastAPI backend URL
       .then((response) => {
         console.log(response.data.status);  // Log the response message
       })
@@ -46,19 +46,50 @@ function Devices() {
                 <CardTitle tag="h4">Kasa Smart Wi-Fi Power Strip</CardTitle>
               </CardHeader>
               <CardBody>
-                <Button color="success" onClick={handleTurnOn}>
-                  Turn On
-                </Button>
-                <Button color="danger" className="ml-2" onClick={handleTurnOff}>
-                  Turn Off
-                </Button>
+                {/* Row for "Turn On" buttons */}
+                <Row>
+                  <Col>
+                    <Button color="success" onClick={() => handleTurnOn(0)}>
+                      Turn On - 0
+                    </Button>
+                  </Col>
+                  <Col>
+                    <Button color="success" onClick={() => handleTurnOn(1)}>
+                      Turn On - 1
+                    </Button>
+                  </Col>
+                  <Col>
+                    <Button color="success" onClick={() => handleTurnOn(2)}>
+                      Turn On - 2
+                    </Button>
+                  </Col>
+                </Row>
+  
+                {/* Row for "Turn Off" buttons */}
+                <Row className="mt-2">
+                  <Col>
+                    <Button color="danger" onClick={() => handleTurnOff(0)}>
+                      Turn Off - 0
+                    </Button>
+                  </Col>
+                  <Col>
+                    <Button color="danger" onClick={() => handleTurnOff(1)}>
+                      Turn Off - 1
+                    </Button>
+                  </Col>
+                  <Col>
+                    <Button color="danger" onClick={() => handleTurnOff(2)}>
+                      Turn Off - 2
+                    </Button>
+                  </Col>
+                </Row>
               </CardBody>
             </Card>
           </Col>
         </Row>
       </div>
     </>
-  );
+  );   
 }
 
 export default Devices;
