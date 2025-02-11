@@ -5,21 +5,14 @@
 =========================================================
 
 * Product Page: https://www.creative-tim.com/product/paper-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
+* Copyright ...
 * Licensed under MIT (https://github.com/creativetimofficial/paper-dashboard-react/blob/main/LICENSE.md)
-
 * Coded by Creative Tim
 
 =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
 */
-/*eslint-disable*/
-import React,  { useState } from "react";
-// react plugin for creating notifications over the dashboard
-// reactstrap components
+
+import React, { useState } from "react";
 import {
   Alert,
   Button,
@@ -36,35 +29,75 @@ import {
 } from "reactstrap";
 
 function LoginPage() {
+  // Toggle between Login and Register modes
+  const [isRegister, setIsRegister] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-
+  const toggleMode = () => {
+    setIsRegister(!isRegister);
     setErrorMessage('');
+  };
 
-    if (!email || !password) {
-      setErrorMessage('Both fields are required!');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrorMessage('');
+    setIsLoading(true);
+
+    if (!email || !password || (isRegister && !confirmPassword)) {
+      setErrorMessage('All fields are required!');
+      setIsLoading(false);
       return;
     }
 
-    setIsLoading(true);
+    if (isRegister && password !== confirmPassword) {
+      setErrorMessage('Passwords do not match!');
+      setIsLoading(false);
+      return;
+    }
 
-    // Sample code for login, this needs to make a call to aws or something
-    setTimeout(() => {
-      if (email === 'user@gmail.com' && password === '12345') {
-        alert('Login successful!');
-        localStorage.setItem('isLoggedIn', 'true');
-        setIsLoading(false);
-        window.location.href = '/admin/dashboard';
+    try {
+      if (isRegister) {
+        // Call the registration API endpoint
+        const res = await fetch('/api/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          alert('Registration successful! Please log in.');
+          setIsRegister(false);
+        } else {
+          setErrorMessage(data.error || 'Registration failed');
+        }
       } else {
-        setErrorMessage('Invalid email or password');
-        setIsLoading(false);
+        // Call the login API endpoint
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          alert('Login successful!');
+          localStorage.setItem('isLoggedIn', 'true');
+          window.location.href = '/admin/dashboard';
+        } else {
+          setErrorMessage(data.error || 'Invalid email or password');
+        }
       }
-    }, 1000);
+    } catch (error) {
+      setErrorMessage('An error occurred. Please try again.');
+    }
+    setIsLoading(false);
   };
 
   return (
@@ -73,7 +106,9 @@ function LoginPage() {
         <Col md="6" lg="4">
           <Card>
             <CardHeader>
-              <CardTitle tag="h4">Login</CardTitle>
+              <CardTitle tag="h4">
+                {isRegister ? 'Register' : 'Login'}
+              </CardTitle>
             </CardHeader>
             <CardBody>
               {errorMessage && (
@@ -81,7 +116,7 @@ function LoginPage() {
                   <span>{errorMessage}</span>
                 </Alert>
               )}
-              <Form onSubmit={handleLogin}>
+              <Form onSubmit={handleSubmit}>
                 <FormGroup>
                   <Label for="email">Email</Label>
                   <Input
@@ -106,13 +141,48 @@ function LoginPage() {
                     required
                   />
                 </FormGroup>
+                {isRegister && (
+                  <FormGroup>
+                    <Label for="confirmPassword">Confirm Password</Label>
+                    <Input
+                      type="password"
+                      name="confirmPassword"
+                      id="confirmPassword"
+                      placeholder="Confirm your password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                    />
+                  </FormGroup>
+                )}
                 <Button block color="primary" type="submit" disabled={isLoading}>
-                  {isLoading ? 'Logging in...' : 'Login'}
+                  {isLoading
+                    ? isRegister ? 'Registering...' : 'Logging in...'
+                    : isRegister ? 'Register' : 'Login'}
                 </Button>
               </Form>
               <div className="text-center mt-3">
-                <a href="#forgot-password">Forgot Password?</a>
+                {isRegister ? (
+                  <p>
+                    Already have an account?{" "}
+                    <a href="#login" onClick={toggleMode}>
+                      Login here
+                    </a>.
+                  </p>
+                ) : (
+                  <p>
+                    Don't have an account?{" "}
+                    <a href="#register" onClick={toggleMode}>
+                      Register here
+                    </a>.
+                  </p>
+                )}
               </div>
+              {!isRegister && (
+                <div className="text-center mt-3">
+                  <a href="#forgot-password">Forgot Password?</a>
+                </div>
+              )}
             </CardBody>
           </Card>
         </Col>
