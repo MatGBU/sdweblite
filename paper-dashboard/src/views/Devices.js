@@ -36,6 +36,27 @@ function Devices() {
       });
   };
 
+  const handleSchedule = (input) => {
+    axios
+      .get(`http://127.0.0.1:8000/schedule?input=${input}`)  // FastAPI backend URL
+      .then((response) => {
+        console.log(response.data.status);  // Log the response message
+      })
+      .catch((error) => {
+        console.error("There was an error scheduling the device:", error);
+      });
+  }
+  const handleDeleteSchedule = (input) => {
+    axios
+      .get(`http://127.0.0.1:8000/delete_schedule?input=${input}`)  // FastAPI backend URL
+      .then((response) => {
+        console.log(response.data.status);  // Log the response message
+      })
+      .catch((error) => {
+        console.error("There was an error scheduling the device:", error);
+      });
+  }
+
   return (
     <>
       <div className="content">
@@ -83,13 +104,52 @@ function Devices() {
                     </Button>
                   </Col>
                 </Row>
+  
+                {/* Row for "Schedule" buttons */}
+                <Row className="mt-2">
+                  <Col>
+                    <Button color="primary" onClick={() => handleSchedule(0)}>
+                      Schedule - 0
+                    </Button>
+                  </Col>
+                  <Col>
+                    <Button color="primary" onClick={() => handleSchedule(1)}>
+                      Schedule - 1
+                    </Button>
+                  </Col>
+                  <Col>
+                    <Button color="primary" onClick={() => handleSchedule(2)}>
+                      Schedule - 2
+                    </Button>
+                  </Col>
+                </Row>
+  
+                {/* Row for "Delete Schedule" buttons */}
+                <Row className="mt-2">
+                  <Col>
+                    <Button color="warning" onClick={() => handleDeleteSchedule(0)}>
+                      Delete Schedule - 0
+                    </Button>
+                  </Col>
+                  <Col>
+                    <Button color="warning" onClick={() => handleDeleteSchedule(1)}>
+                      Delete Schedule - 1
+                    </Button>
+                  </Col>
+                  <Col>
+                    <Button color="warning" onClick={() => handleDeleteSchedule(2)}>
+                      Delete Schedule - 2
+                    </Button>
+                  </Col>
+                </Row>
               </CardBody>
             </Card>
           </Col>
         </Row>
       </div>
     </>
-  );   
+  );
+  
 }
 
 export default Devices;
