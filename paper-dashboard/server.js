@@ -85,6 +85,16 @@ app.post('/api/login', (req, res) => {
   });
 });
 
+const path = require('path');
+
+// Serve frontend files from the "public" directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Handle React/Vue single-page applications (SPA)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

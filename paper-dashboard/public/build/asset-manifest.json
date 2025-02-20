@@ -1,0 +1,19 @@
+{
+  "files": {
+    "main.css": "/static/css/main.f9cbeed6.css",
+    "main.js": "/static/js/main.511176d2.js",
+    "static/media/damir-bosnjak.jpg": "/static/media/damir-bosnjak.efcaca50b633c2ba2ba9.jpg",
+    "static/media/mike.jpg": "/static/media/mike.d34d0690a264ad046861.jpg",
+    "static/media/ecologo.png": "/static/media/ecologo.a53bb30bce87070f8e39.png",
+    "static/media/nucleo-icons.eot": "/static/media/nucleo-icons.bd42d77b9672555647d1.eot",
+    "static/media/nucleo-icons.ttf": "/static/media/nucleo-icons.4466aeec3386b965a232.ttf",
+    "static/media/nucleo-icons.woff": "/static/media/nucleo-icons.8e954b749f951b654fc6.woff",
+    "static/media/nucleo-icons.woff2": "/static/media/nucleo-icons.ec16bc4cc4526801004d.woff2",
+    "static/media/logo.svg": "/static/media/logo.103b5fa18196d5665a7e12318285c916.svg",
+    "index.html": "/index.html"
+  },
+  "entrypoints": [
+    "static/css/main.f9cbeed6.css",
+    "static/js/main.511176d2.js"
+  ]
+}
