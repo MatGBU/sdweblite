@@ -57,20 +57,21 @@ def hydro_main():
     lr_scheduler = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=10, min_lr=1e-6)
 
     model = tf.keras.models.Sequential([
-    tf.keras.layers.Dense(128, kernel_regularizer=regularizers.l2(0.001), input_shape=(X_train.shape[1],)),
-    LeakyReLU(alpha=0.1),
-    tf.keras.layers.BatchNormalization(),
-    tf.keras.layers.Dense(128, kernel_regularizer=regularizers.l2(0.001), input_shape=(X_train.shape[1],)),
-    LeakyReLU(alpha=0.1),
-    tf.keras.layers.BatchNormalization(),
-    tf.keras.layers.Dense(64, kernel_regularizer=regularizers.l2(0.01)),
-    LeakyReLU(alpha=0.1),
-    tf.keras.layers.BatchNormalization(),
-    tf.keras.layers.Dense(32, kernel_regularizer=regularizers.l2(0.001)),
-    tf.keras.layers.Dropout(0.5),
-    LeakyReLU(alpha=0.1),
-    tf.keras.layers.BatchNormalization(),
-    tf.keras.layers.Dense(1) ])
+        tf.keras.layers.Dense(128, kernel_regularizer=regularizers.l2(0.001), input_shape=(X_train.shape[1],)),
+        LeakyReLU(alpha=0.1),
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.Dense(128, kernel_regularizer=regularizers.l2(0.001), input_shape=(X_train.shape[1],)),
+        LeakyReLU(alpha=0.1),
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.Dense(64, kernel_regularizer=regularizers.l2(0.01)),
+        LeakyReLU(alpha=0.1),
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.Dense(32, kernel_regularizer=regularizers.l2(0.001)),
+        tf.keras.layers.Dropout(0.5),
+        LeakyReLU(alpha=0.1),
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.Dense(1)
+    ])
 
     model.compile(optimizer='adam', loss='mean_absolute_error')
 
