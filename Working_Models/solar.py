@@ -4,17 +4,18 @@ from sklearn.preprocessing import StandardScaler
 import tensorflow as tf
 from bisect import bisect_left
 from tensorflow.keras import regularizers
-from tensorflow.keras.layers import LeakyReLU
+from tensorflow.keras.layers import LeakyReLU, Dropout, BatchNormalization
 import numpy as np
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.callbacks import ReduceLROnPlateau
+
 import datetime
 
 now = datetime.datetime.now()
 def solar_main():
 
-    data = pd.read_csv('../AutoCombine.csv')     # updated
+    data = pd.read_csv('./AutoCombine.csv')     # updated
     data = data.fillna(0)
     data['BeginDate'] = pd.to_datetime(data['BeginDate']).dt.tz_localize(None)
 
@@ -82,7 +83,7 @@ def solar_main():
     usable_data['Hour_of_Day'] = usable_data['BeginDate'].dt.hour
     usable_data['Month'] = usable_data['BeginDate'].dt.month
     usable_data['Year'] = usable_data['BeginDate'].dt.year
-    features = usable_data[['Month','Year','Previous_Year_Solar','Previous_2Day_Solar','AdjustedSum','temp', 'humidity', 'precip', 'uvindex', 'cloudcover', 'solarradiation','Previous_Day_Solar','solarenergy','Hour_of_Day','dew','dew','snow','snowdepth','windspeed','windgust']]
+    features = usable_data[['Month','Year','Previous_Year_Solar','Previous_2Day_Solar','temp', 'humidity', 'precip', 'uvindex', 'cloudcover', 'solarradiation','Previous_Day_Solar','solarenergy','Hour_of_Day','dew','dew','snow','snowdepth','windspeed','windgust']]
 
     # Useless Features , 'winddir',,
     target = usable_data['Solar']
@@ -95,24 +96,36 @@ def solar_main():
     scalar = StandardScaler()
     X_train = scalar.fit_transform(X_train)
     X_test = scalar.transform(X_test)
-    early_stopping = EarlyStopping(monitor='val_loss', patience=70, restore_best_weights=True)
+    early_stopping = EarlyStopping(monitor='val_loss', patience=25, restore_best_weights=True)
     lr_scheduler = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=10, min_lr=1e-6)
     model = tf.keras.models.Sequential([
-        tf.keras.layers.Dense(128, kernel_regularizer=regularizers.l2(0.001), input_shape=(X_train.shape[1],)),
+        tf.keras.layers.Dense(512, kernel_regularizer=regularizers.l2(0.001),
+                              input_shape=(X_train.shape[1],)),
         LeakyReLU(alpha=0.1),
-        tf.keras.layers.BatchNormalization(),
-        tf.keras.layers.Dense(64, kernel_regularizer=regularizers.l2(0.01)),
-        LeakyReLU(alpha=0.1),
-        tf.keras.layers.BatchNormalization(),
-        tf.keras.layers.Dense(64, kernel_regularizer=regularizers.l2(0.01)),
-        LeakyReLU(alpha=0.1),
-        tf.keras.layers.BatchNormalization(),
-        tf.keras.layers.Dense(32, kernel_regularizer=regularizers.l2(0.001)),
-        tf.keras.layers.Dropout(0.5),
-        LeakyReLU(alpha=0.1),
-        tf.keras.layers.BatchNormalization(),
+        BatchNormalization(),
+        tf.keras.layers.Dense(256,
+                              kernel_regularizer=regularizers.l2(0.001)),
+        LeakyReLU(alpha=0.10),
+        BatchNormalization(),
+        tf.keras.layers.Dense(128,
+                              kernel_regularizer=regularizers.l2(0.001)),
+        LeakyReLU(alpha=0.10),
+        tf.keras.layers.Dense(128,
+                              kernel_regularizer=regularizers.l2(0.001)),
+        LeakyReLU(alpha=0.10),
+        BatchNormalization(),
+        Dropout(0.4),
+        tf.keras.layers.Dense(64,
+                              kernel_regularizer=regularizers.l2(0.001)),
+        LeakyReLU(alpha=0.10),
+        tf.keras.layers.Dense(32,
+                              kernel_regularizer=regularizers.l2(0.001)),
+        LeakyReLU(alpha=0.10),
+        BatchNormalization(),
+        Dropout(0.3),
         tf.keras.layers.Dense(1)
     ])
+
 
     model.compile(optimizer='adam', loss='mean_absolute_error')
 
@@ -131,14 +144,14 @@ def solar_main():
     rmse = np.sqrt(mse)
     average_y_test = np.mean(y_test)
     percent_error = mae / average_y_test
-    with open('Solar_generation_errors.txt', 'a') as file:
+    with open('Working_Models/Solar_generation_errors.txt', 'a') as file:
         file.write(f'{now.strftime("%Y-%m-%d %H:%M:%S")} - Test Loss: {test_loss}\n')
         file.write(f'{now.strftime("%Y-%m-%d %H:%M:%S")} - Mean Absolute Error (MAE): {mae}\n')
         file.write(f'{now.strftime("%Y-%m-%d %H:%M:%S")} - Mean Squared Error (MSE): {mse}\n')
         file.write(f'{now.strftime("%Y-%m-%d %H:%M:%S")} - Root Mean Squared Error (RMSE): {rmse}\n')
         file.write(f'{now.strftime("%Y-%m-%d %H:%M:%S")} - Percent Error (PERR): {percent_error}\n')
 
-    model.save('SolarModel.h5')
+    model.save('Working_Models/SolarModel.h5')
 
 def get_previous_day_Solar(row, reference_df):
     # Sort reference_df by 'BeginDate' for fast lookups

@@ -91,7 +91,8 @@ def wind_main():
     usable_data['Hour_of_Day'] = usable_data['BeginDate'].dt.hour
     usable_data['Month'] = usable_data['BeginDate'].dt.month
     usable_data['Year'] = usable_data['BeginDate'].dt.year
-    features = usable_data[['Month','Year','Previous_Year_Wind','Previous_2Day_Wind','AdjustedSum','temp', 'humidity', 'precip', 'uvindex', 'cloudcover', 'solarradiation','Previous_Day_Wind','solarenergy','Hour_of_Day','dew','dew','snow','snowdepth','windspeed','windgust', 'winddir']]
+    usable_data['WindSpeedCubed'] = usable_data['windspeed'] ** 3
+    features = usable_data[['WindSpeedCubed','Month','Year','Previous_Year_Wind','Previous_2Day_Wind','Sum','snowdepth','temp','solarenergy','sealevelpressure', 'humidity','solarenergy','snow', 'precip', 'uvindex', 'cloudcover', 'Previous_Day_Wind','Hour_of_Day','dew','windgust','windspeed','winddir']]
 
     # Useless Features , 'winddir',,
     target = usable_data['Wind']
@@ -106,7 +107,7 @@ def wind_main():
     X_test = scalar.transform(X_test)
 
     early_stopping = EarlyStopping(monitor='val_loss',
-                               patience=70,
+                               patience=34,
                                restore_best_weights=True)
 
     lr_scheduler = ReduceLROnPlateau(monitor='val_loss',
@@ -183,7 +184,7 @@ def wind_main():
     percent_error = mae / average_y_test
     
     # write to file (log)
-    with open('Working_Models/Wind_generation_errors.txt', 'a') as file:
+    with open('Wind_generation_errors.txt', 'a') as file:
         file.write('====================================================================================\n')
         file.write(f'{now.strftime("%Y-%m-%d %H:%M:%S")} - Test Loss: {test_loss}\n')
         file.write(f'{now.strftime("%Y-%m-%d %H:%M:%S")} - Mean Absolute Error (MAE): {mae}\n')
@@ -192,7 +193,7 @@ def wind_main():
         file.write(f'{now.strftime("%Y-%m-%d %H:%M:%S")} - Percent Error (PERR): {percent_error}\n')
         file.write('====================================================================================\n')
 
-    model.save('WindModel.h5')
+    model.save('Working_Models/WindModel.h5')
 
 
 # functions

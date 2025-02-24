@@ -11,12 +11,12 @@ from sklearn.preprocessing import StandardScaler
 def working_model():
     print('Hello')
     base_dir = Path.home() / 'Documents' / 'Senior-project' / 'Working_Models'
-    # windmodel = load_model(base_dir / 'WindModel.h5')
+    windmodel = load_model(base_dir / 'WindModel.h5')
     nuclearmodel = load_model(base_dir / 'NuclearModel.h5')
     hydromodel = load_model(base_dir / 'HydroModel.h5')
     solarmodel = load_model(base_dir / 'SolarModel.h5')
     refusemodel = load_model(base_dir / 'RefuseModel.h5')
-    #woodmodel = load_model(base_dir / 'WoodModel.h5')
+    woodmodel = load_model(base_dir / 'WoodModel.h5')
     #Loading and proccesing Test Data 
     testdata = pd.read_csv('./testing.csv')
     testdata['BeginDate'] = pd.to_datetime(testdata['BeginDate'])
@@ -79,49 +79,49 @@ def working_model():
     combined_data['WindSpeedCubed'] = combined_data['windspeed'] ** 3
     inputdatahydro = combined_data[['Month','Previous_Day_Hydro','Previous_2Day_Hydro','Sum','Hour_of_Day','Previous_Year_Hydro','solarradiation','Year','precip','humidity','temp','dew','snow','snowdepth','windspeed','sealevelpressure','cloudcover','severerisk']]
     inputdatanuclear = combined_data[['Month','Day','Previous_2Day_Nuclear','Sum','Hour_of_Day']]
-    #inputdatawind = combined_data[['WindSpeedCubed','Month','Year','Previous_Year_Wind','Previous_2Day_Wind','Sum','snowdepth','temp','solarenergy','sealevelpressure', 'humidity','solarenergy','snow', 'precip', 'uvindex', 'cloudcover', 'Previous_Day_Wind','Hour_of_Day','dew','windgust','windspeed','winddir']]
-    inputdatasolar = combined_data[['Month','Year','Previous_Year_Solar','Previous_2Day_Solar','Sum','temp', 'humidity', 'precip', 'uvindex', 'cloudcover', 'solarradiation','Previous_Day_Solar','solarenergy','Hour_of_Day','dew','dew','snow','snowdepth','windspeed','windgust']]
-    #inputdatawood = combined_data[['Previous_Day_Wood','Month','Previous_2Day_Wood','Sum','Hour_of_Day','Previous_Year_Wood','solarradiation','Year','precip','humidity','temp','dew','snow','snowdepth','windspeed','sealevelpressure','cloudcover','severerisk']]
+    inputdatawind = combined_data[['WindSpeedCubed','Month','Year','Previous_Year_Wind','Previous_2Day_Wind','Sum','snowdepth','temp','solarenergy','sealevelpressure', 'humidity','solarenergy','snow', 'precip', 'uvindex', 'cloudcover', 'Previous_Day_Wind','Hour_of_Day','dew','windgust','windspeed','winddir']]
+    inputdatasolar = combined_data[['Month','Year','Previous_Year_Solar','Previous_2Day_Solar','temp', 'humidity', 'precip', 'uvindex', 'cloudcover', 'solarradiation','Previous_Day_Solar','solarenergy','Hour_of_Day','dew','dew','snow','snowdepth','windspeed','windgust']]
+    inputdatawood = combined_data[['Previous_Day_Wood','Month','Previous_2Day_Wood','Sum','Hour_of_Day','Previous_Year_Wood','solarradiation','Year','precip','humidity','temp','dew','snow','snowdepth','windspeed','sealevelpressure','cloudcover','severerisk']]
     inputdatarefuse = combined_data[['Previous_Day_Wood','Month','Previous_2Day_Wood','Sum','Hour_of_Day','Previous_Year_Wood','solarradiation','Year','precip','humidity','temp','dew','snow','snowdepth','windspeed','sealevelpressure','cloudcover','severerisk']]
     scalar = StandardScaler()
     inputdatahydro = scalar.fit_transform(inputdatahydro)
     inputdatanuclear = scalar.fit_transform(inputdatanuclear)
-    #inputdatawind = scalar.fit_transform(inputdatawind)
+    inputdatawind = scalar.fit_transform(inputdatawind)
     inputdatasolar = scalar.fit_transform(inputdatasolar)
-    #inputdatawood = scalar.fit_transform(inputdatawood)
+    inputdatawood = scalar.fit_transform(inputdatawood)
     inputdatarefuse = scalar.fit_transform(inputdatarefuse)
 
     hydropredictions = hydromodel.predict(inputdatahydro)
     hydropredictions[hydropredictions < 0] = 0
     nuclearpredictions = nuclearmodel.predict(inputdatanuclear)
     nuclearpredictions[nuclearpredictions < 0] = 0
-    #windpredictions = windmodel.predict(inputdatawind)
-    #windpredictions[windpredictions < 0] = 0
+    windpredictions = windmodel.predict(inputdatawind)
+    windpredictions[windpredictions < 0] = 0
     solarpredictions = solarmodel.predict(inputdatasolar)
     solarpredictions[solarpredictions < 0] = 0
     refusepredictions = refusemodel.predict(inputdatarefuse)
     refusepredictions[refusepredictions < 0] = 0
-    #woodpredictions = woodmodel.predict(inputdatawood)
-    #woodpredictions[woodpredictions < 0] = 0
+    woodpredictions = woodmodel.predict(inputdatawood)
+    woodpredictions[woodpredictions < 0] = 0
 
     #Write to csv 
     # Ensure each prediction variable is a 1D array
     hydropredictions = pd.Series(np.array(hydropredictions).ravel())
     nuclearpredictions = pd.Series(np.array(nuclearpredictions).ravel())
-    #windpredictions = pd.Series(np.array(windpredictions).ravel())
+    windpredictions = pd.Series(np.array(windpredictions).ravel())
     solarpredictions = pd.Series(np.array(solarpredictions).ravel())
     refusepredictions = pd.Series(np.array(refusepredictions).ravel())
-    #woodpredictions = pd.Series(np.array(woodpredictions).ravel())
+    woodpredictions = pd.Series(np.array(woodpredictions).ravel())
 
     # Create the DataFrame with BeginDate and all predictions
     output_df = pd.DataFrame({
         'BeginDate': testdata['BeginDate'],
         'HydroPredictions': hydropredictions,
         'NuclearPredictions': nuclearpredictions,
-        #'WindPredictions': windpredictions,
+        'WindPredictions': windpredictions,
         'SolarPredictions': solarpredictions,
         'RefusePredictions': refusepredictions,
-        #'WoodPredictions': woodpredictions
+        'WoodPredictions': woodpredictions
     })
 
     # Write the DataFrame to a CSV file

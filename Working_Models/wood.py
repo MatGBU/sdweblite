@@ -23,7 +23,7 @@ def wood_main():
 
     data['Previous_Year_Wood'] = data.apply(get_previous_year_Wind, axis=1, reference_df=wind_data)
 
-    cutoff_date = pd.to_datetime("2024-11-12").tz_localize(None)
+    cutoff_date = now - datetime.timedelta(days=30)
     usable_data = data[data['BeginDate'] > cutoff_date].copy()
     solar_data2 = usable_data[['BeginDate', 'Wood','Previous_Day','Previous_2Day','Previous_Year']].copy()
 
@@ -97,7 +97,7 @@ def wood_main():
         file.write(f'{now.strftime("%Y-%m-%d %H:%M:%S")} - Percent Error (PERR): {percent_error}\n')
         file.write('====================================================================================\n')
 
-    model.save('WoodModel.h5')
+    model.save('Working_Models/WoodModel.h5')
 
 
 def get_previous_day_Wind(row, reference_df):
