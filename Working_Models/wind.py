@@ -184,7 +184,7 @@ def wind_main():
     percent_error = mae / average_y_test
     
     # write to file (log)
-    with open('Wind_generation_errors.txt', 'a') as file:
+    with open('Working_Models/Wind_generation_errors.txt', 'a') as file:
         file.write('====================================================================================\n')
         file.write(f'{now.strftime("%Y-%m-%d %H:%M:%S")} - Test Loss: {test_loss}\n')
         file.write(f'{now.strftime("%Y-%m-%d %H:%M:%S")} - Mean Absolute Error (MAE): {mae}\n')

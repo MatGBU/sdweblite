@@ -80,14 +80,14 @@ def nuclear_main():
     rmse = np.sqrt(mse)
     average_y_test = np.mean(y_test)
     percent_error = mae / average_y_test
-    with open('nuclear_generation_errors.txt', 'a') as file:
+    with open('Working_Models/nuclear_generation_errors.txt', 'a') as file:
         file.write(f'{now.strftime("%Y-%m-%d %H:%M:%S")} - Test Loss: {test_loss}\n')
         file.write(f'{now.strftime("%Y-%m-%d %H:%M:%S")} - Mean Absolute Error (MAE): {mae}\n')
         file.write(f'{now.strftime("%Y-%m-%d %H:%M:%S")} - Mean Squared Error (MSE): {mse}\n')
         file.write(f'{now.strftime("%Y-%m-%d %H:%M:%S")} - Root Mean Squared Error (RMSE): {rmse}\n')
         file.write(f'{now.strftime("%Y-%m-%d %H:%M:%S")} - Percent Error (PERR): {percent_error}\n')
 
-    model.save('NuclearModel.h5')
+    model.save('Working_Models/NuclearModel.h5')
 
 
 def get_previous_day_Wind(row, reference_df):

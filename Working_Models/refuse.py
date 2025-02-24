@@ -89,14 +89,14 @@ def Refuse_main():
     rmse = np.sqrt(mse)
     average_y_test = np.mean(y_test)
     percent_error = mae / average_y_test
-    with open('Refuse_generation_errors.txt', 'a') as file:
+    with open('Working_Models/Refuse_generation_errors.txt', 'a') as file:
         file.write(f'{now.strftime("%Y-%m-%d %H:%M:%S")} - Test Loss: {test_loss}\n')
         file.write(f'{now.strftime("%Y-%m-%d %H:%M:%S")} - Mean Absolute Error (MAE): {mae}\n')
         file.write(f'{now.strftime("%Y-%m-%d %H:%M:%S")} - Mean Squared Error (MSE): {mse}\n')
         file.write(f'{now.strftime("%Y-%m-%d %H:%M:%S")} - Root Mean Squared Error (RMSE): {rmse}\n')
         file.write(f'{now.strftime("%Y-%m-%d %H:%M:%S")} - Percent Error (PERR): {percent_error}\n')
 
-    model.save('RefuseModel.h5')
+    model.save('Working_Models/RefuseModel.h5')
 
 def get_two_days_before_Wind(row, reference_df):
     # Sort reference_df by 'BeginDate' for fast lookups
