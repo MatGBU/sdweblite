@@ -22,14 +22,15 @@ import PerfectScrollbar from "perfect-scrollbar";
 import { Route, Routes, useLocation } from "react-router-dom";
 
 import DemoNavbar from "components/Navbars/DemoNavbar.js";
+
 import Sidebar from "components/Sidebar/Sidebar.js";
 
-import getRoutes from "routes.js";
+
+import routes from "routes.js";
 
 var ps;
 
 function Dashboard(props) {
-  let routes = getRoutes(localStorage.getItem('isLoggedIn'));
   const [backgroundColor, setBackgroundColor] = React.useState("black");
   const [activeColor, setActiveColor] = React.useState("info");
   const mainPanel = React.useRef();
@@ -65,7 +66,7 @@ function Dashboard(props) {
         activeColor={activeColor}
       />
       <div className="main-panel" ref={mainPanel}>
-        {/* <DemoNavbar {...props} /> */}
+        <DemoNavbar {...props} />
         <Routes>
           {routes.map((prop, key) => {
             return (
@@ -78,9 +79,9 @@ function Dashboard(props) {
             );
           })}
         </Routes>
-       
+
       </div>
-      
+
     </div>
   );
 }

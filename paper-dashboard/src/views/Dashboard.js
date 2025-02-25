@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Line, Pie } from "react-chartjs-2";
-// reactstrap components
 import {
   Card,
   CardHeader,
@@ -12,7 +11,7 @@ import {
 } from "reactstrap";
 
 // core components
-import { predictiongraph } from "../variables/charts.js";
+import { predictiongraph } from "../variables/charts";
 
 function Dashboard() {
   const [lineChartDataone, setLineChartDataone] = useState({
@@ -34,7 +33,7 @@ function Dashboard() {
   useEffect(() => {
     async function loadLineChartDataone() {
       try {
-        const response = await fetch("http://localhost:8080/energy_predictions.csv");
+        const response = await fetch("/data/energy_predictions.csv"); // Updated path
         const csvText = await response.text();
 
         // Parse the CSV
@@ -43,10 +42,10 @@ function Dashboard() {
         const dataRows = rows.slice(1).filter((row) => row.length === headers.length);
 
         const labels = dataRows.map((row) => row[0]); // Dates as labels
-        const hydroData = dataRows.map((row) => parseFloat(row[1]) || 0); // Hydro
-        const nuclearData = dataRows.map((row) => parseFloat(row[2]) || 0); // Nuclear
-        const windData = dataRows.map((row) => parseFloat(row[3]) || 0); // Wind
-        const solarData = dataRows.map((row) => parseFloat(row[4]) || 0); // Solar
+        const hydroData = dataRows.map((row) => parseFloat(row[1]) || 0);
+        const nuclearData = dataRows.map((row) => parseFloat(row[2]) || 0);
+        const windData = dataRows.map((row) => parseFloat(row[3]) || 0);
+        const solarData = dataRows.map((row) => parseFloat(row[4]) || 0);
 
         setLineChartDataone({
           labels: labels,
@@ -101,7 +100,7 @@ function Dashboard() {
   useEffect(() => {
     async function loadPieChartData() {
       try {
-        const response = await fetch("http://127.0.0.1:8080/TwoYear_Training_Set_Copy.csv");
+        const response = await fetch("/data/TwoYear_Training_Set_Copy.csv"); // Updated path
         const csvText = await response.text();
 
         // Parse the CSV
@@ -109,7 +108,7 @@ function Dashboard() {
         const headers = rows[0];
         const dataRows = rows.slice(1).filter((row) => row.length === headers.length);
 
-        const technologyLabels = headers.slice(1, 12); // First 12 technologies
+        const technologyLabels = headers.slice(1, 12);
         const technologyTotals = technologyLabels.map((tech, index) =>
           dataRows.reduce((sum, row) => sum + parseFloat(row[index + 1] || 0), 0)
         );
@@ -139,192 +138,70 @@ function Dashboard() {
     loadPieChartData();
   }, []);
 
-// Fetch data for the second Line Chart
-useEffect(() => {
-  async function loadLineChartDatatwo() {
-    try {
-      const response = await fetch("http://localhost:8080/energy_predictions.csv");
-      const csvText = await response.text();
+  // Fetch data for the second Line Chart
+  useEffect(() => {
+    async function loadLineChartDatatwo() {
+      try {
+        const response = await fetch("/data/energy_predictions.csv"); // Updated path
+        const csvText = await response.text();
 
-      // Parse the CSV
-      const rows = csvText.split("\n").map((row) => row.split(","));
-      const headers = rows[0];
-      const dataRows = rows.slice(1).filter((row) => row.length === headers.length);
+        // Parse the CSV
+        const rows = csvText.split("\n").map((row) => row.split(","));
+        const headers = rows[0];
+        const dataRows = rows.slice(1).filter((row) => row.length === headers.length);
 
-      const labels = dataRows.map((row) => row[0]); // Dates as labels
-      const refuseData = dataRows.map((row) => parseFloat(row[5]) || 0); // refuse
-      const woodData = dataRows.map((row) => parseFloat(row[6]) || 0); // wood
+        const labels = dataRows.map((row) => row[0]);
+        const refuseData = dataRows.map((row) => parseFloat(row[5]) || 0);
+        const woodData = dataRows.map((row) => parseFloat(row[6]) || 0);
 
-      setLineChartDatatwo({
-        labels: labels,
-        datasets: [
-          {
-            label: "Refuse",
-            borderColor: "#6bd098",
-            backgroundColor: "#6bd098",
-            data: refuseData,
-            fill: false,
-            tension: 0.4,
-            borderWidth: 3,
-          },
-          {
-            label: "Wood",
-            borderColor: "#f17e5d",
-            backgroundColor: "#f17e5d",
-            data: woodData,
-            fill: false,
-            tension: 0.4,
-            borderWidth: 3,
-          },
-        ],
-      });
-    } catch (error) {
-      console.error("Error loading line chart data:", error);
+        setLineChartDatatwo({
+          labels: labels,
+          datasets: [
+            {
+              label: "Refuse",
+              borderColor: "#6bd098",
+              backgroundColor: "#6bd098",
+              data: refuseData,
+              fill: false,
+              tension: 0.4,
+              borderWidth: 3,
+            },
+            {
+              label: "Wood",
+              borderColor: "#f17e5d",
+              backgroundColor: "#f17e5d",
+              data: woodData,
+              fill: false,
+              tension: 0.4,
+              borderWidth: 3,
+            },
+          ],
+        });
+      } catch (error) {
+        console.error("Error loading line chart data:", error);
+      }
     }
-  }
 
-  loadLineChartDatatwo();
-}, []);
-
-
-
-
+    loadLineChartDatatwo();
+  }, []);
 
   return (
     <>
       <div className="content">
         <Row>
-          <Col lg="3" md="6" sm="6">
-            <Card className="card-stats">
-              <CardBody>
-                <Row>
-                  <Col md="4" xs="5">
-                    <div className="icon-big text-center icon-warning">
-                      <i className="nc-icon nc-globe text-warning" />
-                    </div>
-                  </Col>
-                  <Col md="8" xs="7">
-                    <div className="numbers">
-                      <p className="card-category">Power Usage</p>
-                      <CardTitle tag="p">150kW</CardTitle>
-                      <p />
-                    </div>
-                  </Col>
-                </Row>
-              </CardBody>
-              <CardFooter>
-                <hr />
-                <div className="stats">
-                  <i className="fas fa-sync-alt" /> Update Now
-                </div>
-              </CardFooter>
-            </Card>
-          </Col>
-          <Col lg="3" md="6" sm="6">
-            <Card className="card-stats">
-              <CardBody>
-                <Row>
-                  <Col md="4" xs="5">
-                    <div className="icon-big text-center icon-warning">
-                      <i className="nc-icon nc-money-coins text-success" />
-                    </div>
-                  </Col>
-                  <Col md="8" xs="7">
-                    <div className="numbers">
-                      <p className="card-category">Money Saved</p>
-                      <CardTitle tag="p">$ 14</CardTitle>
-                      <p />
-                    </div>
-                  </Col>
-                </Row>
-              </CardBody>
-              <CardFooter>
-                <hr />
-                <div className="stats">
-                  <i className="far fa-calendar" /> Last Month
-                </div>
-              </CardFooter>
-            </Card>
-          </Col>
-          <Col lg="3" md="6" sm="6">
-            <Card className="card-stats">
-              <CardBody>
-                <Row>
-                  <Col md="4" xs="5">
-                    <div className="icon-big text-center icon-warning">
-                      <i className="nc-icon nc-vector text-danger" />
-                    </div>
-                  </Col>
-                  <Col md="8" xs="7">
-                    <div className="numbers">
-                      <p className="card-category">Sources of Energy</p>
-                      <CardTitle tag="p">5</CardTitle>
-                      <p />
-                    </div>
-                  </Col>
-                </Row>
-              </CardBody>
-              <CardFooter>
-                <hr />
-                <div className="stats">
-                  <i className="far fa-clock" /> In the last day
-                </div>
-              </CardFooter>
-            </Card>
-          </Col>
-          <Col lg="3" md="6" sm="6">
-            <Card className="card-stats">
-              <CardBody>
-                <Row>
-                  <Col md="4" xs="5">
-                    <div className="icon-big text-center icon-warning">
-                      <i className="nc-icon nc-favourite-28 text-primary" />
-                    </div>
-                  </Col>
-                  <Col md="8" xs="7">
-                    <div className="numbers">
-                      <p className="card-category">Cleanest Generation</p>
-                      <CardTitle tag="p">In 3 hours</CardTitle>
-                      <p />
-                    </div>
-                  </Col>
-                </Row>
-              </CardBody>
-              <CardFooter>
-                <hr />
-                <div className="stats">
-                  <i className="fas fa-sync-alt" /> Update now
-                </div>
-              </CardFooter>
-            </Card>
-          </Col>
-        </Row>
-        <Row>
           <Col md="12">
-          <Card >
-            <CardHeader>
-             <CardTitle tag="h5">Generation Prediction</CardTitle>
+            <Card>
+              <CardHeader>
+                <CardTitle tag="h5">Generation Prediction</CardTitle>
                 <p className="card-category">24 Hours Forecast (MW)</p>
               </CardHeader>
               <CardBody>
-              {lineChartDataone.labels.length > 0 ? (
-                <Line
-                  id="lineChart"
-                  data={lineChartDataone}
-                  options={predictiongraph.options}
-                  width={600}
-                  length={100}
-                />
-              ) : (
-                <p>Loading line chart data...</p>
-              )}
+                {lineChartDataone.labels.length > 0 ? (
+                  <Line data={lineChartDataone} options={predictiongraph.options} />
+                ) : (
+                  <p>Loading line chart data...</p>
+                )}
               </CardBody>
-              <CardFooter>
-                <hr />
-                <div className="stats">
-                <i className="fa fa-history" /> Updated from CSV
-                </div>
-              </CardFooter>
             </Card>
           </Col>
         </Row>
@@ -333,47 +210,20 @@ useEffect(() => {
             <Card>
               <CardHeader>
                 <CardTitle tag="h5">Generation Breakdown</CardTitle>
-                <p className="card-category">Last Year's Performance (MW)</p>
               </CardHeader>
-              <CardBody style={{ height: "430px" }}>
-              {pieChartData.labels.length > 0 ? (
-                <Pie id="pieChart" data={pieChartData} />
-              ) : (
-                <p>Loading pie chart data...</p>
-              )}
-              </CardBody> 
-              <CardFooter>
-                <div className="stats">
-                  <i i className="fa fa-history" /> Updated from CSV
-                </div>
-              </CardFooter>
+              <CardBody>
+                {pieChartData.labels.length > 0 ? <Pie data={pieChartData} /> : <p>Loading pie chart data...</p>}
+              </CardBody>
             </Card>
           </Col>
           <Col md="8">
-            <Card className="card-chart">
+            <Card>
               <CardHeader>
                 <CardTitle tag="h5">Generation Prediction</CardTitle>
-                <p className="card-category">24 Hour Forecast (MW)</p>
               </CardHeader>
               <CardBody>
-              {lineChartDatatwo.labels.length > 0 ? (
-                <Line
-                  id="lineChart"
-                  data={lineChartDatatwo}
-                  options={predictiongraph.options}
-                  height = "129px"
-                />
-              ) : (
-                <p>Loading line chart data...</p>
-              )}
+                {lineChartDatatwo.labels.length > 0 ? <Line data={lineChartDatatwo} options={predictiongraph.options} /> : <p>Loading line chart data...</p>}
               </CardBody>
-              <CardFooter>
-
-                <hr />
-                <div className="card-stats">
-                  <i i className="fa fa-history" /> Updated from CSV
-                </div>
-              </CardFooter>
             </Card>
           </Col>
         </Row>
@@ -383,4 +233,3 @@ useEffect(() => {
 }
 
 export default Dashboard;
-
